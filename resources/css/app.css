@@ -1,3 +1,39 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+    html {
+        scroll-behavior: smooth;
+    }
+    body {
+        @apply bg-harbor-50 text-harbor-950;
+    }
+}
+
+@layer components {
+    .btn-primary {
+        @apply inline-flex items-center justify-center px-7 py-3.5 bg-harbor-950 text-white font-semibold text-sm rounded-full
+               transition-all duration-300 ease-out
+               hover:bg-harbor-800 hover:shadow-card-hover hover:-translate-y-0.5
+               active:translate-y-0 active:shadow-card;
+    }
+    .btn-secondary {
+        @apply inline-flex items-center justify-center px-7 py-3.5 bg-harbor-100 text-harbor-950 font-semibold text-sm rounded-full border border-harbor-200
+               transition-all duration-300 ease-out
+               hover:bg-harbor-200 hover:shadow-card hover:-translate-y-0.5
+               active:translate-y-0;
+    }
+    .card {
+        @apply bg-white rounded-2xl p-6 shadow-card
+               transition-all duration-300 ease-out
+               hover:shadow-card-hover hover:-translate-y-1;
+    }
+}
+
+/* KYC camera scan-line animation */
+@keyframes kyc-scan {
+    0%   { top: 15%;  opacity: 0.8; }
+    50%  { top: 85%;  opacity: 1;   }
+    100% { top: 15%;  opacity: 0.8; }
+}

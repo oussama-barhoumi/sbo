@@ -21,6 +21,8 @@ class Transaction extends Model
         'reference',
         'type',
         'amount',
+        'currency',
+        'method',
         'status',
         'from_account_id',
         'to_account_id',

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ApiProfileUpdateRequest;
+use App\Models\Transaction;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -18,12 +19,57 @@ class ProfileController extends Controller
     public function show(Request $request): JsonResponse
     {
         /** @var \App\Models\User $user */
-        $user    = $request->user();
+        $user = $request->user();
         $account = $user->accounts()->where('status', 'active')->first();
+
+        // Fetch recent transactions
+        $transactions = Transaction::where('from_account_id', $account?->id)
+            ->orWhere('to_account_id', $account?->id)
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($txn) use ($account) {
+                return [
+                    'id' => $txn->id,
+                    'reference' => $txn->reference,
+                    'type' => $txn->type,
+                    'amount' => $txn->to_account_id === $account->id ? (float)$txn->amount : -(float)$txn->amount,
+                    'currency' => $txn->currency,
+                    'description' => $txn->description ?? ($txn->to_account_id === $account->id ? 'Inbound Transfer' : 'Outbound Transfer'),
+                    'date' => $txn->created_at->toFormattedDateString(),
+                    'fullDate' => $txn->created_at->toIso8601String(),
+                    'method' => $txn->method,
+                    'status' => $txn->status,
+                ];
+            });
+
+        // Prepare chart data (last 7 days)
+        $chartData = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dayName = $date->format('D');
+            
+            // Calculate total volume for that day (just as an example metric)
+            $volume = Transaction::whereDate('created_at', $date)
+                ->where(function($q) use ($account) {
+                    $q->where('from_account_id', $account?->id)
+                      ->orWhere('to_account_id', $account?->id);
+                })
+                ->sum('amount');
+
+            $chartData[] = [
+                'name' => $dayName,
+                'value' => (float)$volume,
+            ];
+        }
 
         return response()->json([
             'success' => true,
-            'profile' => $this->buildProfile($user, $account),
+            'profile' => array_merge($this->buildProfile($user, $account), [
+                'balance' => (float)($account?->balance ?? 0),
+                'transactions' => $transactions,
+                'chartData' => $chartData,
+            ]),
         ]);
     }
 

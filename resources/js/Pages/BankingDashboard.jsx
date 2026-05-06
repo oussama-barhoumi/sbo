@@ -431,9 +431,9 @@ export default function BankingDashboard() {
                         <span className="font-black text-2xl tracking-tighter uppercase italic">Harbor</span>
                     </Link>
                     <div className="hidden lg:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400">
-                        <a href="#" className="text-black border-b-2 border-black pb-1">Overview</a>
-                        <a href="#" className="hover:text-black transition-all">Treasury</a>
-                        <a href="#" className="hover:text-black transition-all">Wealth</a>
+                        <Link href={route('dashboard')} className={`${route().current('dashboard') ? 'text-black border-b-2 border-black pb-1' : 'hover:text-black'} transition-all`}>Overview</Link>
+                        <Link href={route('treasury')} className={`${route().current('treasury') ? 'text-black border-b-2 border-black pb-1' : 'hover:text-black'} transition-all`}>Treasury</Link>
+                        <Link href={route('wealth')} className={`${route().current('wealth') ? 'text-black border-b-2 border-black pb-1' : 'hover:text-black'} transition-all`}>Wealth</Link>
                     </div>
                 </div>
                 <div className="flex items-center gap-8">
@@ -532,7 +532,7 @@ export default function BankingDashboard() {
                             
                             <div className="h-[350px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={CHART_DATA}>
+                                    <AreaChart data={profile?.chartData || CHART_DATA}>
                                         <defs>
                                             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
                                                 <stop offset="5%" stopColor="#000" stopOpacity={0.05}/>
@@ -590,13 +590,13 @@ export default function BankingDashboard() {
                             </div>
 
                             <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1">
-                                {[
+                                {(profile?.transactions?.length > 0 ? profile.transactions : [
                                     { icon: <Globe />, label: 'Swift Transfer', date: 'Oct 24', amount: -450.00 },
                                     { icon: <CreditCard />, label: 'POS Terminal', date: 'Oct 22', amount: -4.50 },
                                     { icon: <TrendingUp />, label: 'Asset Yield', date: 'Oct 21', amount: 125.40 },
                                     { icon: <Landmark />, label: 'Vault Deposit', date: 'Oct 20', amount: 2000.00 },
                                     { icon: <ArrowDownLeft />, label: 'Refund', date: 'Oct 19', amount: 50.00 },
-                                ].map((txn, i) => (
+                                ]).map((txn, i) => (
                                     <motion.div 
                                         key={i} 
                                         whileHover={{ x: 5 }}
@@ -604,10 +604,10 @@ export default function BankingDashboard() {
                                     >
                                         <div className="flex items-center gap-5">
                                             <div className="w-14 h-14 bg-gray-50 rounded-2xl flex items-center justify-center text-black border border-gray-100 transition-all duration-500 group-hover:bg-black group-hover:text-white group-hover:scale-105">
-                                                {txn.icon}
+                                                {txn.icon || <Globe />}
                                             </div>
                                             <div>
-                                                <p className="text-sm font-black tracking-tighter uppercase italic">{txn.label}</p>
+                                                <p className="text-sm font-black tracking-tighter uppercase italic">{txn.label || txn.description}</p>
                                                 <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{txn.date}</p>
                                             </div>
                                         </div>

@@ -19,6 +19,8 @@ Route::post('/register-account/validate-field', [RegisterAccountController::clas
 Route::post('/register-account/verify-kyc', [RegisterAccountController::class, 'verifyKyc'])->name('register.account.kyc');
 
 Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/treasury', fn() => Inertia::render('Treasury'))->middleware(['auth'])->name('treasury');
+Route::get('/wealth', fn() => Inertia::render('Wealth'))->middleware(['auth'])->name('wealth');
 
 // Admin Dashboard Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion';
+import { Link } from '@inertiajs/react';
 import { CreditCard, TrendingUp, Landmark, ShieldCheck, Zap, Globe } from 'lucide-react';
 import Magnetic from './Animations/Magnetic';
 
@@ -147,9 +148,9 @@ export default function Services() {
                             <p className="text-brand-300 font-medium">Join 2 million+ users redefining their financial future today.</p>
                         </div>
                         <Magnetic>
-                            <a href="/register-account" className="px-10 py-5 bg-white text-brand-950 font-black rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 whitespace-nowrap">
+                            <Link href="/register-account" className="px-10 py-5 bg-white text-brand-950 font-black rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 whitespace-nowrap">
                                 Get Started Now
-                            </a>
+                            </Link>
                         </Magnetic>
                     </div>
                 </motion.div>

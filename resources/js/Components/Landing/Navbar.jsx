@@ -57,20 +57,20 @@ export default function Navbar() {
                 {/* Right Actions */}
                 <div className="flex items-center gap-2">
                     <Magnetic>
-                        <a
-                            href="#"
+                        <Link
+                            href="/login"
                             className="hidden sm:inline-flex px-6 py-2.5 text-sm font-bold text-black hover:text-gray-700 transition-colors"
                         >
                             Log In
-                        </a>
+                        </Link>
                     </Magnetic>
                     <Magnetic>
-                        <a
-                            href="#"
+                        <Link
+                            href="/register-account"
                             className="btn-primary !py-2.5 !px-7 !text-xs !rounded-2xl !bg-black"
                         >
                             Sign Up
-                        </a>
+                        </Link>
                     </Magnetic>
 
                     {/* Burger */}
@@ -112,8 +112,8 @@ export default function Navbar() {
                         ))}
                     </div>
                     <div className="mt-auto pb-12 flex flex-col gap-4">
-                        <a href="#" className="btn-primary w-full py-5 text-lg !bg-black">Create Free Account</a>
-                        <a href="#" className="btn-secondary w-full py-5 text-lg">Login to Portal</a>
+                        <Link href="/register-account" className="btn-primary w-full py-5 text-lg !bg-black">Create Free Account</Link>
+                        <Link href="/login" className="btn-secondary w-full py-5 text-lg">Login to Portal</Link>
                     </div>
                 </div>
             </div>

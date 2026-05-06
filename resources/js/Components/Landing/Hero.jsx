@@ -1,3 +1,4 @@
+import { Link } from '@inertiajs/react';
 import { motion, useScroll, useTransform, useSpring } from 'framer-motion';
 import Magnetic from './Animations/Magnetic';
 
@@ -83,17 +84,17 @@ export default function Hero() {
 
                         <div className="flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-4 mb-16">
                             <Magnetic>
-                                <a href="/register-account" className="btn-primary w-full sm:w-auto shadow-2xl shadow-brand-500/30 group">
+                                <Link href="/register-account" className="btn-primary w-full sm:w-auto shadow-2xl shadow-brand-500/30 group">
                                     Start Your Journey
                                     <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                     </svg>
-                                </a>
+                                </Link>
                             </Magnetic>
                             <Magnetic>
-                                <a href="#" className="btn-secondary w-full sm:w-auto">
+                                <Link href="/login" className="btn-secondary w-full sm:w-auto">
                                     Explore Rates
-                                </a>
+                                </Link>
                             </Magnetic>
                         </div>
 

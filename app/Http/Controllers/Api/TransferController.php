@@ -51,6 +51,23 @@ class TransferController extends Controller
             ], 422);
         }
 
+        // --- Fraud Detection ---
+        $fraudDetected = $this->detectFraud($request, $data['amount']);
+        if ($fraudDetected) {
+            Log::warning('Fraud attempt detected', [
+                'userId' => $senderId,
+                'amount' => $data['amount'],
+                'ip' => $request->ip(),
+                'country' => $request->header('X-App-Country', 'Unknown'),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'isSuspicious' => true,
+                'message' => 'Security Alert: This transaction has been flagged as suspicious due to unusual activity (Amount or Location). Please contact support.',
+            ], 403);
+        }
+
         try {
             $result = $this->bankingService->apiTransfer(
                 senderAccount:    $senderAccount,
@@ -124,5 +141,27 @@ class TransferController extends Controller
                 'message' => $e->getMessage(),
             ], 422);
         }
+    }
+
+    /**
+     * Simple Fraud Detection Logic
+     */
+    private function detectFraud($request, $amount): bool
+    {
+        // 1. Unusual Amount Check (e.g., > 50,000)
+        if ($amount > 50000) {
+            return true;
+        }
+
+        // 2. Mock Country Check
+        // In a real app, use GeoIP. Here we check a mock header for demo.
+        $requestCountry = $request->header('X-App-Country');
+        $userHomeCountry = 'MA'; // Default for demo
+
+        if ($requestCountry && $requestCountry !== $userHomeCountry) {
+            return true;
+        }
+
+        return false;
     }
 }

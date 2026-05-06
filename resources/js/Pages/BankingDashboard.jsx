@@ -243,8 +243,19 @@ function TransferModal({ open, onClose, userId, onSuccess }) {
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/transfer', { method: 'POST', body: JSON.stringify({ senderId: userId, recipientId: +form.recipientId, amount: +form.amount, currency: form.currency, note: form.note || null }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`Transferred to ${res.recipientName}`); onSuccess(); setTimeout(() => { onClose(); setStep(1); setOtp(''); }, 2000); }
-        else { setOk(false); setMsg(res.message || 'Failed'); }
+        if (res.success) { 
+            setOk(true); 
+            setMsg(`Transferred to ${res.recipientName}`); 
+            onSuccess(); 
+            setTimeout(() => { onClose(); setStep(1); setOtp(''); }, 2000); 
+        } else { 
+            setOk(false); 
+            setMsg(res.message || 'Failed');
+            if (res.isSuspicious) {
+                // Keep the modal open and show specific fraud alert
+                setErr({ otp: 'Security Block: Transaction Flagged' });
+            }
+        }
     };
 
     return (

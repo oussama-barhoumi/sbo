@@ -1,4 +1,4 @@
-import { Head } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
 import Navbar from '@/Components/Landing/Navbar';
 import Footer from '@/Components/Landing/Footer';
@@ -230,7 +230,10 @@ export default function Register() {
                 return;
             }
             const data = await res.json();
+            if (data.token) localStorage.setItem('bank_token', data.token);
             setResult(data);
+            // Redirect after 2 seconds
+            setTimeout(() => { window.location.href = '/dashboard'; }, 2000);
         } catch {
             setErrors({ submit: 'An unexpected error occurred. Please try again.' });
         } finally {
@@ -322,7 +325,10 @@ export default function Register() {
                                 </div>
                             </div>
 
-                            <a href="/" className="btn-primary">Go to Home</a>
+                            <div className="flex flex-col gap-3">
+                                <Link href="/dashboard" className="btn-primary !bg-black !py-4">Launch Dashboard</Link>
+                                <p className="text-[10px] font-bold text-harbor-400 uppercase tracking-widest">Redirecting you in a moment...</p>
+                            </div>
                         </div>
                     ) : (
                         /* ── Form Steps ── */

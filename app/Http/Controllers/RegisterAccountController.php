@@ -49,20 +49,31 @@ class RegisterAccountController extends Controller
                 'status' => 'active',
             ]);
 
+            // 3. Log the user in (Session)
+            auth()->login($user);
+
             return [
                 'user' => $user,
                 'account' => $account,
             ];
         });
 
-        // 3. Return the safe response (no password, no internal details)
+        /** @var \App\Models\User $user */
+        $user = $result['user'];
+
+        // 4. Issue a token for the Banking API (LocalStorage compatibility)
+        $token = $user->createToken('bank-api')->plainTextToken;
+
+        // 5. Return the safe response
         return response()->json([
-            'name' => $result['user']->name,
-            'email' => $result['user']->email,
-            'phone' => $result['user']->phone,
+            'success' => true,
+            'name' => $user->name,
+            'email' => $user->email,
+            'phone' => $user->phone,
             'currency' => $result['account']->currency,
             'accountId' => $result['account']->account_number,
-            'createdAt' => $result['user']->created_at->toIso8601String(),
+            'createdAt' => $user->created_at->toIso8601String(),
+            'token' => $token,
         ], 201);
     }
 

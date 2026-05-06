@@ -55,7 +55,7 @@ class LoginController extends Controller
         }
 
         // --- Attempt authentication ---
-        if (! Auth::once(['email' => $email, 'password' => $password])) {
+        if (! Auth::attempt(['email' => $email, 'password' => $password], $request->boolean('remember'))) {
             RateLimiter::hit($limiterKey, self::DECAY_SECONDS);
 
             // Record failed attempt

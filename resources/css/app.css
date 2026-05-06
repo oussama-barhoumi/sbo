@@ -7,27 +7,32 @@
         scroll-behavior: smooth;
     }
     body {
-        @apply bg-harbor-50 text-harbor-950;
+        @apply bg-[#fcfdfe] text-brand-950 antialiased;
     }
 }
 
 @layer components {
+    .glass-card {
+        @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-glass transition-all duration-300;
+    }
     .btn-primary {
-        @apply inline-flex items-center justify-center px-7 py-3.5 bg-harbor-950 text-white font-semibold text-sm rounded-full
-               transition-all duration-300 ease-out
-               hover:bg-harbor-800 hover:shadow-card-hover hover:-translate-y-0.5
-               active:translate-y-0 active:shadow-card;
+        @apply inline-flex items-center justify-center px-8 py-4 bg-brand-600 text-white font-bold text-sm rounded-full
+               transition-all duration-300 ease-in-out
+               hover:bg-brand-700 hover:shadow-float hover:-translate-y-1
+               active:translate-y-0 active:scale-95;
     }
     .btn-secondary {
-        @apply inline-flex items-center justify-center px-7 py-3.5 bg-harbor-100 text-harbor-950 font-semibold text-sm rounded-full border border-harbor-200
-               transition-all duration-300 ease-out
-               hover:bg-harbor-200 hover:shadow-card hover:-translate-y-0.5
-               active:translate-y-0;
+        @apply inline-flex items-center justify-center px-8 py-4 bg-white/50 backdrop-blur-sm text-brand-950 font-bold text-sm rounded-full border border-white/60
+               transition-all duration-300 ease-in-out
+               hover:bg-white/80 hover:shadow-glass hover:-translate-y-1
+               active:translate-y-0 active:scale-95;
     }
-    .card {
-        @apply bg-white rounded-2xl p-6 shadow-card
-               transition-all duration-300 ease-out
-               hover:shadow-card-hover hover:-translate-y-1;
+    .mesh-gradient {
+        background-color: #ffffff;
+        background-image: 
+            radial-gradient(at 0% 0%, hsla(0,0%,95%,1) 0, transparent 50%), 
+            radial-gradient(at 50% 0%, hsla(0,0%,90%,1) 0, transparent 50%), 
+            radial-gradient(at 100% 0%, hsla(0,0%,85%,1) 0, transparent 50%);
     }
 }
 

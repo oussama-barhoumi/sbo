@@ -1,106 +1,142 @@
 import { useState } from 'react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 
 const footerLinks = {
-    personal: {
-        title: 'Personal',
-        links: ['Checking', 'Savings', 'Credit Cards', 'Personal Loans', 'Mobile App'],
+    banking: {
+        title: 'Banking',
+        links: ['Premium Checking', 'Smart Savings', 'Business Suite', 'Private Wealth'],
     },
-    business: {
-        title: 'Business',
-        links: ['Business Checking', 'Merchant Services', 'Business Loans', 'Payroll', 'Treasury'],
+    company: {
+        title: 'Company',
+        links: ['About Us', 'Global Impact', 'Careers', 'Security'],
     },
-    support: {
-        title: 'Support',
-        links: ['Help Center', 'Contact Us', 'Find a Branch', 'Security', 'Accessibility'],
+    legal: {
+        title: 'Legal',
+        links: ['Terms of Service', 'Privacy Policy', 'Cookie Policy', 'Licenses'],
     },
 };
-
-const socialIcons = [
-    { name: 'Twitter', path: 'M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84' },
-    { name: 'LinkedIn', path: 'M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z' },
-    { name: 'Facebook', path: 'M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z' },
-];
 
 export default function Footer() {
     const [email, setEmail] = useState('');
 
     return (
-        <footer id="footer" className="bg-harbor-950 text-white pt-16 pb-6">
-            <div className="max-w-7xl mx-auto px-5 sm:px-8">
-                {/* Top Grid */}
-                <div className="grid grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-14">
-                    {/* Bank Info */}
-                    <div className="col-span-2 lg:col-span-2">
-                        <div className="flex items-center gap-2.5 mb-4">
-                            <div className="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center">
-                                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+        <footer id="footer" className="bg-black text-white pt-24 pb-12 relative overflow-hidden">
+            {/* Background Decor */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full pointer-events-none opacity-10">
+                <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-white rounded-full blur-[150px] -translate-x-1/2 -translate-y-1/2" />
+            </div>
+
+            <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
+                <div className="grid lg:grid-cols-12 gap-12 lg:gap-24 mb-20">
+                    {/* Brand & Newsletter */}
+                    <div className="lg:col-span-5">
+                        <a href="/" className="flex items-center gap-3 mb-8 group">
+                            <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                                <svg className="w-6 h-6 text-black" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a3 3 0 00-3 3c0 1.66 1.34 3 3 3s3-1.34 3-3a3 3 0 00-3-3zm0 8v12m0 0c-4-1-7-4-7-8h3m4 8c4-1 7-4 7-8h-3" />
                                 </svg>
                             </div>
-                            <span className="text-lg font-bold tracking-tight">HarborBank</span>
+                            <span className="text-2xl font-black tracking-tight">HarborBank</span>
+                        </a>
+                        
+                        <h4 className="text-xl font-bold mb-6 tracking-tight">Join the financial revolution.</h4>
+                        
+                        <div className="flex gap-2 max-w-md p-1.5 bg-white/5 border border-white/10 rounded-2xl focus-within:border-white/30 transition-all duration-300">
+                            <input
+                                id="newsletter-email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                placeholder="Enter your work email"
+                                className="flex-1 px-4 py-3 bg-transparent border-none rounded-xl text-sm text-white placeholder-gray-500 focus:ring-0"
+                            />
+                            <button
+                                id="newsletter-subscribe"
+                                className="px-6 py-3 bg-white text-black font-black text-sm rounded-xl transition-all duration-300 hover:bg-gray-200"
+                            >
+                                Subscribe
+                            </button>
                         </div>
-                        <p className="text-sm text-harbor-400 leading-relaxed mb-6 max-w-xs">
-                            123 Financial District<br />
-                            New York, NY 10004<br />
-                            United States
+                        <p className="text-[10px] text-gray-500 mt-4 px-2">
+                            By subscribing, you agree to our Privacy Policy and Terms of Service.
                         </p>
-                        {/* Newsletter */}
-                        <div className="max-w-sm">
-                            <p className="text-sm font-semibold mb-3">Stay up to date</p>
-                            <div className="flex gap-2">
-                                <input
-                                    id="newsletter-email"
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Enter your email"
-                                    className="flex-1 px-4 py-2.5 bg-white/5 border border-white/10 rounded-xl text-sm text-white placeholder-harbor-500 focus:outline-none focus:border-white/30 transition-colors"
-                                />
-                                <button
-                                    id="newsletter-subscribe"
-                                    className="px-5 py-2.5 bg-white text-harbor-950 font-semibold text-sm rounded-xl transition-all duration-200 hover:bg-harbor-100 hover:-translate-y-0.5 active:translate-y-0"
-                                >
-                                    Subscribe
-                                </button>
-                            </div>
-                        </div>
                     </div>
 
-                    {/* Link Columns */}
-                    {Object.values(footerLinks).map((column) => (
-                        <div key={column.title}>
-                            <h4 className="text-sm font-semibold mb-4">{column.title}</h4>
-                            <ul className="space-y-2.5">
-                                {column.links.map((link) => (
-                                    <li key={link}>
-                                        <a href="#" className="text-sm text-harbor-400 hover:text-white transition-colors duration-200">
-                                            {link}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    ))}
+                    {/* Nav Links */}
+                    <div className="lg:col-span-7 grid grid-cols-2 md:grid-cols-3 gap-10">
+                        {Object.values(footerLinks).map((column) => (
+                            <div key={column.title}>
+                                <h5 className="text-xs font-black text-brand-500 uppercase tracking-widest mb-6">{column.title}</h5>
+                                <ul className="space-y-4">
+                                    {column.links.map((link) => (
+                                        <li key={link}>
+                                            <a href="#" className="text-sm text-gray-400 hover:text-white transition-colors duration-200 font-medium">
+                                                {link}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
                 </div>
 
-                {/* Divider */}
-                <div className="border-t border-white/10 pt-6">
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                        <div className="flex items-center gap-5">
-                            {socialIcons.map((icon) => (
-                                <a key={icon.name} href="#" aria-label={icon.name} className="w-9 h-9 rounded-lg bg-white/5 flex items-center justify-center transition-all duration-200 hover:bg-white/10 hover:-translate-y-0.5">
-                                    <svg className="w-4 h-4 text-harbor-400" fill="currentColor" viewBox="0 0 24 24">
-                                        <path d={icon.path} />
-                                    </svg>
-                                </a>
-                            ))}
+                {/* Contact Info Row */}
+                <div className="grid md:grid-cols-3 gap-8 py-10 border-y border-white/5 mb-10">
+                    <div className="flex items-center gap-4 group">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-brand-500 group-hover:bg-brand-600 group-hover:text-white transition-all">
+                            <Mail className="w-5 h-5" />
                         </div>
-                        <div className="flex flex-wrap items-center gap-4 text-xs text-harbor-500">
-                            <span>© 2026 HarborBank. All rights reserved.</span>
-                            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                            <a href="#" className="hover:text-white transition-colors">Terms of Service</a>
-                            <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-gray-500 tracking-widest leading-none mb-1">Email us</p>
+                            <p className="text-sm font-bold">hello@harborbank.io</p>
                         </div>
+                    </div>
+                    <div className="flex items-center gap-4 group">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-brand-500 group-hover:bg-brand-600 group-hover:text-white transition-all">
+                            <Phone className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-gray-500 tracking-widest leading-none mb-1">Call us</p>
+                            <p className="text-sm font-bold">+1 (800) 555-0100</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-4 group">
+                        <div className="w-10 h-10 rounded-xl bg-white/5 flex items-center justify-center text-brand-500 group-hover:bg-brand-600 group-hover:text-white transition-all">
+                            <MapPin className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <p className="text-[10px] font-black uppercase text-gray-500 tracking-widest leading-none mb-1">Visit us</p>
+                            <p className="text-sm font-bold">Financial District, NY</p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Bottom Bar */}
+                <div className="flex flex-col md:flex-row items-center justify-between gap-8 pt-4">
+                    <div className="flex items-center gap-4">
+                        {[
+                            { name: 'Twitter', path: 'M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z' },
+                            { name: 'Linkedin', path: 'M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z' },
+                            { name: 'Instagram', path: 'M17 2H7C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5zm-5 13c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm5-8a1 1 0 110-2 1 1 0 010 2z' },
+                            { name: 'Github', path: 'M12 2A10 10 0 002 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5V19c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.9-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.08.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .83-.27 2.75 1.02a9.58 9.58 0 015 0c1.92-1.3 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.6 1.03 2.68 0 3.82-2.34 4.66-4.57 4.91.36.31.68.92.68 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0012 2z' }
+                        ].map((social, i) => (
+                            <a key={i} href="#" aria-label={social.name} className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-brand-600 hover:text-white hover:-translate-y-1 transition-all duration-300">
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d={social.path} />
+                                    {social.name === 'Instagram' && <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />}
+                                    {social.name === 'Instagram' && <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" />}
+                                    {social.name === 'Instagram' && <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />}
+                                </svg>
+                            </a>
+                        ))}
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-gray-500 font-medium">
+                        <span>© 2026 HarborBank. Redefining Finance.</span>
+                        <a href="#" className="hover:text-white transition-colors">Privacy</a>
+                        <a href="#" className="hover:text-white transition-colors">Terms</a>
+                        <a href="#" className="hover:text-white transition-colors">Cookies</a>
                     </div>
                 </div>
             </div>

@@ -2,6 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@media print {
+    .no-print, nav, footer, button, .bg-black, .bg-gray-50, .shadow-2xl, .blur-3xl {
+        display: none !important;
+    }
+    .print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        background: white !important;
+        color: black !important;
+    }
+    body {
+        background: white !important;
+    }
+    .bg-white {
+        border: none !important;
+        box-shadow: none !important;
+    }
+}
+
 @layer base {
     html {
         scroll-behavior: smooth;

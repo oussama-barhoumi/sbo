@@ -225,46 +225,81 @@ function TransferModal({ open, onClose, userId, onSuccess }) {
     const [msg, setMsg] = useState(null);
     const [ok, setOk] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [step, setStep] = useState(1); // 1: form, 2: otp
+    const [otp, setOtp] = useState('');
 
-    const submit = async (e) => {
+    const nextStep = (e) => {
         e.preventDefault();
         const errs = {};
         if (!form.recipientId) errs.recipientId = 'ID Required';
         if (!form.amount || +form.amount <= 0) errs.amount = 'Invalid Amount';
         if (Object.keys(errs).length) { setErr(errs); return; }
+        setStep(2);
+    };
+
+    const submit = async (e) => {
+        e.preventDefault();
+        if (otp !== '1234') { setErr({ otp: 'Invalid Verification Code' }); return; }
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/transfer', { method: 'POST', body: JSON.stringify({ senderId: userId, recipientId: +form.recipientId, amount: +form.amount, currency: form.currency, note: form.note || null }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`Transferred to ${res.recipientName}`); onSuccess(); }
+        if (res.success) { setOk(true); setMsg(`Transferred to ${res.recipientName}`); onSuccess(); setTimeout(() => { onClose(); setStep(1); setOtp(''); }, 2000); }
         else { setOk(false); setMsg(res.message || 'Failed'); }
     };
 
     return (
-        <Modal open={open} onClose={onClose} title="Transfer">
+        <Modal open={open} onClose={() => { onClose(); setStep(1); setOtp(''); }} title={step === 1 ? "Transfer" : "Verify Transfer"}>
             <Alert msg={msg} ok={ok} />
-            <form onSubmit={submit}>
-                <Field label="Recipient ID" error={err.recipientId}>
-                    <input type="number" value={form.recipientId} onChange={e => setForm(p => ({ ...p, recipientId: e.target.value }))} placeholder="e.g. 1004" className={inputCls(err.recipientId)} />
-                </Field>
-                <div className="grid grid-cols-2 gap-5">
-                    <Field label="Amount" error={err.amount}>
-                        <input type="number" min="1" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0.00" className={inputCls(err.amount)} />
+            
+            {step === 1 ? (
+                <form onSubmit={nextStep}>
+                    <Field label="Recipient ID" error={err.recipientId}>
+                        <input type="number" value={form.recipientId} onChange={e => setForm(p => ({ ...p, recipientId: e.target.value }))} placeholder="e.g. 1004" className={inputCls(err.recipientId)} />
                     </Field>
-                    <Field label="Currency">
-                        <select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className={inputCls()}>
-                            {['DH', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
-                        </select>
+                    <div className="grid grid-cols-2 gap-5">
+                        <Field label="Amount" error={err.amount}>
+                            <input type="number" min="1" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0.00" className={inputCls(err.amount)} />
+                        </Field>
+                        <Field label="Currency">
+                            <select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className={inputCls()}>
+                                {['DH', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
+                            </select>
+                        </Field>
+                    </div>
+                    <Field label="Note (optional)">
+                        <input type="text" value={form.note} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} placeholder="Payment details" className={inputCls()} />
                     </Field>
-                </div>
-                <Field label="Note (optional)">
-                    <input type="text" value={form.note} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} placeholder="Payment details" className={inputCls()} />
-                </Field>
-                <Magnetic>
-                    <button type="submit" disabled={loading} className="w-full bg-black text-white py-6 rounded-[1.8rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 mt-4">
-                        {loading ? 'Sending…' : 'Execute Transfer'}
-                    </button>
-                </Magnetic>
-            </form>
+                    <Magnetic>
+                        <button type="submit" className="w-full bg-black text-white py-6 rounded-[1.8rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-800 transition-all active:scale-95 mt-4">
+                            Next: Verify
+                        </button>
+                    </Magnetic>
+                </form>
+            ) : (
+                <form onSubmit={submit}>
+                    <div className="mb-8 p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-center">Confirming Transfer</p>
+                        <p className="text-2xl font-black text-center">{fmt(form.amount, form.currency)}</p>
+                        <p className="text-[10px] font-bold text-center text-gray-400 mt-1 uppercase italic">To Recipient #{form.recipientId}</p>
+                    </div>
+                    <Field label="Secure OTP (Use 1234)" error={err.otp}>
+                        <input 
+                            type="text" 
+                            maxLength="4" 
+                            value={otp} 
+                            onChange={e => setOtp(e.target.value)} 
+                            placeholder="0000" 
+                            className={`${inputCls(err.otp)} text-center text-4xl tracking-[1em] font-black`} 
+                        />
+                    </Field>
+                    <div className="flex gap-4 mt-6">
+                        <button type="button" onClick={() => setStep(1)} className="flex-1 py-5 bg-gray-100 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest">Back</button>
+                        <button type="submit" disabled={loading} className="flex-1 py-5 bg-black text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest disabled:opacity-50">
+                            {loading ? 'Confirming...' : 'Authorize'}
+                        </button>
+                    </div>
+                </form>
+            )}
         </Modal>
     );
 }
@@ -482,10 +517,14 @@ export default function BankingDashboard() {
                                         <Landmark className="w-7 h-7 text-white" />
                                     </div>
                                     <p className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-400 mb-3">Total Liquid Assets</p>
-                                    <h3 className="text-5xl font-black tracking-tighter mb-8 tabular-nums">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
-                                    <div className="flex items-center gap-3">
-                                        <div className="px-3 py-1 bg-black text-white text-[9px] font-black uppercase rounded-lg tracking-widest">+12.4%</div>
-                                        <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Active Growth</span>
+                                    <h3 className="text-5xl font-black tracking-tighter mb-4 tabular-nums">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
+                                    
+                                    <div className="flex flex-col gap-1 mb-8">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-300">Account ID: <span className="text-black">{profile?.accountNumber}</span></p>
+                                        <div className="flex items-center gap-3">
+                                            <div className="px-3 py-1 bg-black text-white text-[9px] font-black uppercase rounded-lg tracking-widest">+12.4%</div>
+                                            <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">Active Growth</span>
+                                        </div>
                                     </div>
                                 </div>
                             </TiltCard>
@@ -584,12 +623,34 @@ export default function BankingDashboard() {
                         <motion.div variants={itemVars} className="bg-white rounded-[4rem] p-10 border border-gray-100 shadow-2xl shadow-gray-200/50 h-full max-h-[700px] flex flex-col">
                             <div className="flex items-center justify-between mb-12">
                                 <h3 className="text-2xl font-black tracking-tighter">Activity Ledger</h3>
-                                <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-300">
-                                    <HistoryIcon className="w-5 h-5" />
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={() => window.print()}
+                                        className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 hover:text-black hover:bg-gray-100 transition-all no-print"
+                                        title="Download PDF Statement"
+                                    >
+                                        <ArrowDownLeft className="w-5 h-5 rotate-180" />
+                                    </button>
+                                    <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 no-print">
+                                        <HistoryIcon className="w-5 h-5" />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                            <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1 print-area">
+                                {/* Print Header (Hidden on screen) */}
+                                <div className="hidden print:block mb-10 border-b-2 border-black pb-8">
+                                    <div className="flex justify-between items-end">
+                                        <div>
+                                            <h1 className="text-4xl font-black tracking-tighter uppercase italic mb-1">HarborBank</h1>
+                                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Official Financial Statement</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-[10px] font-black uppercase tracking-widest">Date: {new Date().toLocaleDateString()}</p>
+                                            <p className="text-[10px] font-black uppercase tracking-widest">Account: {profile?.accountNumber}</p>
+                                        </div>
+                                    </div>
+                                </div>
                                 {(profile?.transactions?.length > 0 ? profile.transactions : [
                                     { icon: <Globe />, label: 'Swift Transfer', date: 'Oct 24', amount: -450.00 },
                                     { icon: <CreditCard />, label: 'POS Terminal', date: 'Oct 22', amount: -4.50 },

@@ -3,8 +3,9 @@ import { Head } from '@inertiajs/react';
 import DeleteUserForm from './Partials/DeleteUserForm';
 import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
+import SecurityPreferences from './Partials/SecurityPreferences';
 import { motion } from 'framer-motion';
-import { User, Shield, Lock, Trash2, ArrowLeft } from 'lucide-react';
+import { User, Shield, Lock, Trash2, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { Link } from '@inertiajs/react';
 
 export default function Edit({ mustVerifyEmail, status }) {
@@ -79,6 +80,24 @@ export default function Edit({ mustVerifyEmail, status }) {
                     </div>
                     <div className="lg:col-span-8 bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl shadow-gray-200/50">
                         <UpdatePasswordForm className="max-w-2xl" />
+                    </div>
+                </motion.div>
+
+                {/* Advanced Security Section */}
+                <motion.div variants={itemVars} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                    <div className="lg:col-span-4">
+                        <div className="flex items-center gap-4 mb-4">
+                            <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center text-white">
+                                <ShieldCheck className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-xl font-black uppercase tracking-tighter">Preferences</h3>
+                        </div>
+                        <p className="text-gray-400 text-sm font-medium leading-relaxed">
+                            Configure multi-factor authentication and transaction guard protocols for maximum account integrity.
+                        </p>
+                    </div>
+                    <div className="lg:col-span-8 bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl shadow-gray-200/50">
+                        <SecurityPreferences className="max-w-2xl" />
                     </div>
                 </motion.div>
 

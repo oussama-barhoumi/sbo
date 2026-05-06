@@ -21,6 +21,7 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [profileDropdown, setProfileDropdown] = useState(false);
+    const [notificationsOpen, setNotificationsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -59,6 +60,45 @@ export default function AuthenticatedLayout({ header, children }) {
                                 <span className="text-[9px] font-black uppercase tracking-[0.2em] text-gray-400">Secure Link</span>
                             </div>
                             <span className="text-sm font-black">{user.name}</span>
+                        </div>
+
+                        <div className="relative mr-2">
+                            <button 
+                                onClick={() => setNotificationsOpen(!notificationsOpen)}
+                                className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 hover:border-black transition-all group relative"
+                            >
+                                <Bell className="w-5 h-5 text-gray-400 group-hover:text-black" />
+                                <div className="absolute top-3 right-3 w-2 h-2 bg-black rounded-full border-2 border-white" />
+                            </button>
+
+                            <AnimatePresence>
+                                {notificationsOpen && (
+                                    <motion.div 
+                                        initial={{ opacity: 0, y: 15, scale: 0.95 }}
+                                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                                        exit={{ opacity: 0, y: 15, scale: 0.95 }}
+                                        className="absolute right-0 mt-4 w-80 bg-white rounded-[2.5rem] shadow-2xl border border-gray-100 p-6 z-50 overflow-hidden"
+                                    >
+                                        <div className="flex items-center justify-between mb-6">
+                                            <h3 className="text-sm font-black uppercase tracking-widest italic">Alerts</h3>
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-300">2 New</span>
+                                        </div>
+                                        <div className="space-y-4">
+                                            {[
+                                                { title: 'Transfer Success', msg: 'Sent $450.00 to #1004', time: '2m ago', type: 'success' },
+                                                { title: 'Security Alert', msg: 'New login from unknown IP', time: '1h ago', type: 'warning' },
+                                            ].map((n, i) => (
+                                                <div key={i} className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                                    <p className="text-[10px] font-black uppercase tracking-widest mb-1">{n.title}</p>
+                                                    <p className="text-[11px] font-medium text-gray-500 leading-tight">{n.msg}</p>
+                                                    <p className="text-[8px] font-black uppercase tracking-widest text-gray-300 mt-2">{n.time}</p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                        <button className="w-full mt-6 py-4 bg-black text-white rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.3em]">View All</button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
 
                         <div className="relative">

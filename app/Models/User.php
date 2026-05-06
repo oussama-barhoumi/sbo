@@ -58,6 +58,32 @@ class User extends Authenticatable
     }
 
     /**
+     * Assign a role to the user with validation and logging.
+     * 
+     * @throws \InvalidArgumentException
+     */
+    public function assignRole(string $role): void
+    {
+        $validRoles = [self::ROLE_USER, self::ROLE_ADMIN, self::ROLE_SUPER_ADMIN];
+
+        if (!in_array($role, $validRoles)) {
+            throw new \InvalidArgumentException("Invalid role: {$role}");
+        }
+
+        $oldRole = $this->role;
+        $this->role = $role;
+        $this->save();
+
+        \Illuminate\Support\Facades\Log::info("Role changed for user {$this->id}", [
+            'old_role' => $oldRole,
+            'new_role' => $role,
+            'performed_by' => auth()->id() ?? 'system/tinker'
+        ]);
+
+        \App\Events\RoleAssigned::dispatch($this, $role, $oldRole);
+    }
+
+    /**
      * Get the audit logs performed by this admin.
      */
     public function adminAuditLogs(): HasMany

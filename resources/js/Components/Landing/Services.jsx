@@ -1,4 +1,6 @@
+import { motion } from 'framer-motion';
 import { CreditCard, TrendingUp, Landmark, ShieldCheck, Zap, Globe } from 'lucide-react';
+import Magnetic from './Animations/Magnetic';
 
 const services = [
     {
@@ -46,29 +48,67 @@ const services = [
 ];
 
 export default function Services() {
+    const containerVars = {
+        initial: {},
+        animate: {
+            transition: {
+                staggerChildren: 0.1
+            }
+        }
+    };
+
+    const cardVars = {
+        initial: { opacity: 0, y: 50 },
+        animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
+    };
+
     return (
         <section id="services" className="py-24 lg:py-32 relative overflow-hidden bg-white">
             <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
                 {/* Section Header */}
                 <div className="text-center max-w-3xl mx-auto mb-20">
-                    <span className="inline-flex items-center gap-2 px-5 py-2 bg-brand-50 border border-brand-100 rounded-full text-[10px] font-black text-brand-950 uppercase tracking-[0.2em] mb-6">
+                    <motion.span 
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        className="inline-flex items-center gap-2 px-5 py-2 bg-brand-50 border border-brand-100 rounded-full text-[10px] font-black text-brand-950 uppercase tracking-[0.2em] mb-6"
+                    >
                         Limitless Features
-                    </span>
-                    <h2 className="text-4xl sm:text-6xl font-black text-brand-950 tracking-tight mb-6 leading-[1.1]">
+                    </motion.span>
+                    <motion.h2 
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.2 }}
+                        className="text-4xl sm:text-6xl font-black text-brand-950 tracking-tight mb-6 leading-[1.1]"
+                    >
                         Financial tools for <br />
                         <span className="italic">the next generation</span>
-                    </h2>
-                    <p className="text-brand-500 text-lg font-medium leading-relaxed">
+                    </motion.h2>
+                    <motion.p 
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 }}
+                        className="text-brand-500 text-lg font-medium leading-relaxed"
+                    >
                         Say goodbye to traditional banking limits. We've built a ecosystem 
                         that empowers you to spend, save, and invest anywhere on Earth.
-                    </p>
+                    </motion.p>
                 </div>
 
                 {/* Services Grid */}
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                <motion.div 
+                    variants={containerVars}
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={{ once: true, margin: "-100px" }}
+                    className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8"
+                >
                     {services.map((service, index) => (
-                        <div
+                        <motion.div
                             key={service.title}
+                            variants={cardVars}
                             className="glass-card group cursor-pointer p-8 rounded-[2.5rem] hover:bg-brand-950 hover:text-white"
                         >
                             <div className={`w-16 h-16 rounded-3xl ${service.bg} flex items-center justify-center mb-8 transition-all duration-500 group-hover:scale-110 shadow-sm`}>
@@ -90,22 +130,29 @@ export default function Services() {
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                 </svg>
                             </div>
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
 
                 {/* Bottom CTA */}
-                <div className="mt-20 p-10 lg:p-12 bg-brand-950 text-white rounded-[3rem] relative overflow-hidden group">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    className="mt-20 p-10 lg:p-12 bg-brand-950 text-white rounded-[3rem] relative overflow-hidden group"
+                >
                     <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-8">
                         <div className="text-center lg:text-left">
                             <h3 className="text-3xl sm:text-4xl font-black mb-2 tracking-tight">Ready to transcend traditional banking?</h3>
                             <p className="text-brand-300 font-medium">Join 2 million+ users redefining their financial future today.</p>
                         </div>
-                        <a href="/register-account" className="px-10 py-5 bg-white text-brand-950 font-black rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 whitespace-nowrap">
-                            Get Started Now
-                        </a>
+                        <Magnetic>
+                            <a href="/register-account" className="px-10 py-5 bg-white text-brand-950 font-black rounded-3xl transition-all duration-300 hover:scale-105 active:scale-95 whitespace-nowrap">
+                                Get Started Now
+                            </a>
+                        </Magnetic>
                     </div>
-                </div>
+                </motion.div>
             </div>
         </section>
     );

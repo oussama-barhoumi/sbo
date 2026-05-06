@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from '@inertiajs/react';
+import Magnetic from './Animations/Magnetic';
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -55,18 +56,22 @@ export default function Navbar() {
 
                 {/* Right Actions */}
                 <div className="flex items-center gap-2">
-                    <a
-                        href="#"
-                        className="hidden sm:inline-flex px-6 py-2.5 text-sm font-bold text-black hover:text-gray-700 transition-colors"
-                    >
-                        Log In
-                    </a>
-                    <a
-                        href="#"
-                        className="btn-primary !py-2.5 !px-7 !text-xs !rounded-2xl !bg-black"
-                    >
-                        Sign Up
-                    </a>
+                    <Magnetic>
+                        <a
+                            href="#"
+                            className="hidden sm:inline-flex px-6 py-2.5 text-sm font-bold text-black hover:text-gray-700 transition-colors"
+                        >
+                            Log In
+                        </a>
+                    </Magnetic>
+                    <Magnetic>
+                        <a
+                            href="#"
+                            className="btn-primary !py-2.5 !px-7 !text-xs !rounded-2xl !bg-black"
+                        >
+                            Sign Up
+                        </a>
+                    </Magnetic>
 
                     {/* Burger */}
                     <button

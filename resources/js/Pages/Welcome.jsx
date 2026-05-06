@@ -8,7 +8,7 @@ import Footer from '@/Components/Landing/Footer';
 
 export default function Welcome() {
     return (
-        <>
+        <div className="selection:bg-black selection:text-white">
             <Head title="Modern Digital Banking">
                 <meta name="description" content="HarborBank — Banking that moves with you. Zero-fee checking, high-yield savings, and seamless transfers." />
             </Head>
@@ -21,6 +21,6 @@ export default function Welcome() {
                 <Promotions />
             </main>
             <Footer />
-        </>
+        </div>
     );
 }

@@ -30,7 +30,10 @@
         scroll-behavior: smooth;
     }
     body {
-        @apply bg-[#fcfdfe] text-brand-950 antialiased;
+        @apply bg-[#fcfdfe] text-brand-950 antialiased transition-colors duration-500;
+    }
+    .dark body {
+        @apply bg-[#050505] text-white;
     }
 }
 

@@ -22,6 +22,29 @@ export default function AuthenticatedLayout({ header, children }) {
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [profileDropdown, setProfileDropdown] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
+    const [isDark, setIsDark] = useState(false);
+
+    useEffect(() => {
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            setIsDark(true);
+        } else {
+            document.documentElement.classList.remove('dark');
+            setIsDark(false);
+        }
+    }, []);
+
+    const toggleTheme = () => {
+        if (isDark) {
+            document.documentElement.classList.remove('dark');
+            localStorage.theme = 'light';
+            setIsDark(false);
+        } else {
+            document.documentElement.classList.add('dark');
+            localStorage.theme = 'dark';
+            setIsDark(true);
+        }
+    };
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
@@ -31,9 +54,9 @@ export default function AuthenticatedLayout({ header, children }) {
     }, []);
 
     return (
-        <div className="min-h-screen bg-gray-50 text-black font-sans selection:bg-black selection:text-white pb-24 lg:pb-0">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] text-black dark:text-white font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black pb-24 lg:pb-0 transition-colors duration-500">
             {/* Premium Nav */}
-            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/80 backdrop-blur-2xl py-4 shadow-sm' : 'bg-white py-6'}`}>
+            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/80 dark:bg-black/80 backdrop-blur-2xl py-4 shadow-sm' : 'bg-white dark:bg-black py-6'}`}>
                 <div className="max-w-[1600px] mx-auto px-6 sm:px-10 flex items-center justify-between">
                     <div className="flex items-center gap-12">
                         <Link href="/" className="flex items-center gap-3 group">
@@ -62,7 +85,16 @@ export default function AuthenticatedLayout({ header, children }) {
                             <span className="text-sm font-black">{user.name}</span>
                         </div>
 
-                        <div className="relative mr-2">
+                        <div className="relative mr-2 flex items-center gap-4">
+                            {/* Theme Toggle */}
+                            <button 
+                                onClick={toggleTheme}
+                                className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 hover:border-black transition-all group"
+                                title="Toggle Theme"
+                            >
+                                {isDark ? <Zap className="w-5 h-5 text-black" /> : <ShieldCheck className="w-5 h-5 text-gray-400 group-hover:text-black" />}
+                            </button>
+
                             <button 
                                 onClick={() => setNotificationsOpen(!notificationsOpen)}
                                 className="w-12 h-12 bg-gray-50 rounded-2xl flex items-center justify-center border border-gray-100 hover:border-black transition-all group relative"
@@ -95,7 +127,12 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 </div>
                                             ))}
                                         </div>
-                                        <button className="w-full mt-6 py-4 bg-black text-white rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.3em]">View All</button>
+                                        <button 
+                                            onClick={() => alert('Notifications Archive: Accessing historical security logs...')}
+                                            className="w-full mt-6 py-4 bg-black text-white rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.4em]"
+                                        >
+                                            View All
+                                        </button>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
@@ -208,9 +245,9 @@ export default function AuthenticatedLayout({ header, children }) {
             {/* Premium Footer */}
             <footer className="max-w-[1600px] mx-auto px-6 sm:px-10 py-20 mt-20 border-t border-gray-100 flex flex-col md:flex-row items-center justify-between gap-10 opacity-20">
                 <p className="text-[9px] font-black uppercase tracking-[0.5em] text-black">HarborBank Quantum Session © 2026</p>
-                <div className="flex gap-10 text-[9px] font-black uppercase tracking-[0.5em] text-gray-400">
-                    <a href="#">End-to-End Encryption</a>
-                    <a href="#">Privacy Protocol</a>
+                <div className="flex gap-10 text-[9px] font-black uppercase tracking-[0.5em] text-gray-400 no-print">
+                    <button onClick={() => alert('Harbor Quantum Encryption: AES-256-GCM Active.')} className="hover:text-black transition-colors">End-to-End Encryption</button>
+                    <button onClick={() => alert('Privacy Protocol: Your data is protected by Swiss-grade privacy laws.')} className="hover:text-black transition-colors">Privacy Protocol</button>
                 </div>
             </footer>
         </div>

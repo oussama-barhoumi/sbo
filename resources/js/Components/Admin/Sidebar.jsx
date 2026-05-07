@@ -7,62 +7,75 @@ import {
     History, 
     Settings, 
     LogOut,
-    TrendingUp
+    TrendingUp,
+    Zap
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 
 const Sidebar = () => {
     const { url } = usePage();
 
     const menuItems = [
-        { name: 'Dashboard', icon: LayoutDashboard, href: '/admin/dashboard' },
-        { name: 'User Management', icon: Users, href: '/admin/users' },
-        { name: 'Admin Management', icon: ShieldCheck, href: '/admin/admins' },
-        { name: 'Audit Logs', icon: History, href: '/admin/audit-logs' },
+        { name: 'Identity Oversight', icon: LayoutDashboard, href: '/admin/dashboard' },
+        { name: 'Client Directory', icon: Users, href: '/admin/users' },
+        { name: 'Protocol Officers', icon: ShieldCheck, href: '/admin/admins' },
+        { name: 'Security Ledger', icon: History, href: '/admin/audit-logs' },
     ];
 
     return (
-        <aside className="fixed left-0 top-0 h-full w-72 bg-[#0f172a] border-r border-slate-800/50 backdrop-blur-xl z-50">
-            <div className="p-8">
-                <div className="flex items-center gap-3 mb-12">
-                    <div className="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center shadow-lg shadow-indigo-500/20">
-                        <TrendingUp className="text-white w-6 h-6" />
+        <aside className="fixed left-0 top-0 h-full w-72 bg-white border-r border-gray-100 z-50 selection:bg-black selection:text-white">
+            <div className="p-8 h-full flex flex-col">
+                <div className="flex items-center gap-4 mb-16 px-2">
+                    <div className="w-12 h-12 bg-black rounded-2xl flex items-center justify-center shadow-xl shadow-black/10">
+                        <Zap className="text-white w-6 h-6" />
                     </div>
-                    <span className="text-2xl font-bold bg-gradient-to-r from-white to-slate-400 bg-clip-text text-transparent">
-                        HarborAdmin
-                    </span>
+                    <div>
+                        <span className="block text-xl font-black tracking-tighter uppercase italic leading-none">
+                            Harbor
+                        </span>
+                        <span className="block text-[8px] font-black uppercase tracking-[0.4em] text-gray-300 mt-1">
+                            Admin Command
+                        </span>
+                    </div>
                 </div>
 
-                <nav className="space-y-2">
+                <nav className="space-y-3 flex-1">
                     {menuItems.map((item) => {
                         const isActive = url.startsWith(item.href);
                         return (
                             <Link
                                 key={item.name}
                                 href={item.href}
-                                className={`flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group ${
+                                className={`flex items-center gap-4 px-5 py-4 rounded-2xl transition-all duration-500 group relative ${
                                     isActive 
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20' 
-                                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-white'
+                                    ? 'bg-black text-white shadow-2xl shadow-black/20' 
+                                    : 'text-gray-400 hover:text-black hover:bg-gray-50'
                                 }`}
                             >
-                                <item.icon className={`w-5 h-5 ${isActive ? 'text-white' : 'group-hover:text-white'}`} />
-                                <span className="font-medium">{item.name}</span>
+                                <item.icon className={`w-5 h-5 transition-transform duration-500 ${isActive ? 'text-white' : 'group-hover:scale-110'}`} />
+                                <span className="text-[10px] font-black uppercase tracking-widest">{item.name}</span>
+                                {isActive && (
+                                    <motion.div 
+                                        layoutId="activeTab"
+                                        className="absolute -left-2 w-1 h-8 bg-black rounded-full"
+                                    />
+                                )}
                             </Link>
                         );
                     })}
                 </nav>
-            </div>
 
-            <div className="absolute bottom-8 left-8 right-8">
-                <Link
-                    href="/logout"
-                    method="post"
-                    as="button"
-                    className="flex items-center gap-4 px-4 py-3.5 rounded-2xl w-full text-slate-400 hover:bg-red-500/10 hover:text-red-400 transition-all duration-300"
-                >
-                    <LogOut className="w-5 h-5" />
-                    <span className="font-medium">Logout</span>
-                </Link>
+                <div className="pt-8 border-t border-gray-50">
+                    <Link
+                        href={route('logout')}
+                        method="post"
+                        as="button"
+                        className="flex items-center gap-4 px-5 py-4 rounded-2xl w-full text-gray-400 hover:bg-black hover:text-white transition-all duration-500 group"
+                    >
+                        <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                        <span className="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+                    </Link>
+                </div>
             </div>
         </aside>
     );

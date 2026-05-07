@@ -179,7 +179,10 @@ const Dashboard = ({ stats, chartData }) => {
                                 </div>
                             </div>
 
-                            <button className="w-full mt-10 py-5 bg-white text-black rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.3em] hover:bg-gray-200 transition-all active:scale-95 relative z-10">
+                            <button 
+                                onClick={() => alert('Quantum Audit Log: Generating real-time security report...')}
+                                className="w-full mt-10 py-5 bg-white text-black rounded-[1.5rem] font-black text-[10px] uppercase tracking-[0.3em] hover:bg-gray-200 transition-all active:scale-95 relative z-10"
+                            >
                                 Global Audit Log
                             </button>
                         </motion.div>

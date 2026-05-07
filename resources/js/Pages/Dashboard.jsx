@@ -144,15 +144,16 @@ export default function Dashboard() {
 
                     {/* Interactive Feature Grid */}
                     {[
-                        { icon: <CreditCard className="w-6 h-6" />, title: 'Asset Cards', desc: 'Manage your physical and virtual payment instruments.' },
-                        { icon: <History className="w-6 h-6" />, title: 'Deep Audit', desc: 'Complete history of every encrypted transaction.' },
-                        { icon: <LayoutDashboard className="w-6 h-6" />, title: 'Wealth Graph', desc: 'Predictive analytics for your financial growth.' },
-                        { icon: <Lock className="w-6 h-6" />, title: 'Vault Settings', desc: 'Configure biometric and multi-factor security layers.' },
+                        { icon: <CreditCard className="w-6 h-6" />, title: 'Asset Cards', desc: 'Manage your physical and virtual payment instruments.', href: '/banking' },
+                        { icon: <History className="w-6 h-6" />, title: 'Deep Audit', desc: 'Complete history of every encrypted transaction.', href: '/banking' },
+                        { icon: <LayoutDashboard className="w-6 h-6" />, title: 'Wealth Graph', desc: 'Predictive analytics for your financial growth.', href: '/wealth' },
+                        { icon: <Lock className="w-6 h-6" />, title: 'Vault Settings', desc: 'Configure biometric and multi-factor security layers.', href: '/profile' },
                     ].map((feature, i) => (
                         <motion.div 
                             key={i} 
                             variants={itemVars}
                             whileHover={{ y: -10 }}
+                            onClick={() => window.location.href = feature.href}
                             className="lg:col-span-3 bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl shadow-gray-200/30 hover:border-black transition-all cursor-pointer group"
                         >
                             <div className="w-16 h-16 bg-gray-50 rounded-[1.5rem] flex items-center justify-center mb-10 border border-gray-100 group-hover:bg-black group-hover:text-white transition-all duration-500">

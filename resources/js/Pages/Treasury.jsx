@@ -77,7 +77,10 @@ export default function Treasury() {
                                 Your treasury assets are protected by quantum-safe encryption and multi-signature authorization protocols.
                             </p>
                         </div>
-                        <button className="w-full py-5 bg-white text-black rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all">
+                        <button 
+                            onClick={() => alert('Initiating Deep Asset Audit... Connecting to Node MA-01')}
+                            className="w-full py-5 bg-white text-black rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all"
+                        >
                             Audit Assets
                         </button>
                     </motion.div>

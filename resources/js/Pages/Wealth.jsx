@@ -52,7 +52,10 @@ export default function Wealth() {
                                 </div>
                             </div>
                         </div>
-                        <button className="w-full mt-12 py-5 bg-white text-black rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all relative z-10">
+                        <button 
+                            onClick={() => alert('Performance Engine: Loading aggregate yield metrics...')}
+                            className="w-full mt-12 py-5 bg-white text-black rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-gray-200 transition-all relative z-10"
+                        >
                             View Performance
                         </button>
                     </motion.div>

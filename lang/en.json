@@ -2,6 +2,8 @@
     "welcome.title": "Modern Digital Banking",
     "welcome.description": "HarborBank — Banking that moves with you. Zero-fee checking, high-yield savings, and seamless transfers.",
     "nav.home": "Home",
+    "nav.services": "Services",
+    "nav.trust": "Security",
     "nav.openAccount": "Open Account",
     "nav.signIn": "Sign In",
 

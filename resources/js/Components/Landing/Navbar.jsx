@@ -40,8 +40,8 @@ export default function Navbar() {
 
     const links = [
         { href: '/', label: t('nav.home') },
-        { href: '/register-account', label: t('nav.openAccount') },
-        { href: '/login', label: t('nav.signIn') },
+        { href: '#services', label: t('nav.services') },
+        { href: '#trust', label: t('nav.trust') },
     ];
 
     const currentLang = LANGUAGES.find((l) => l.code === locale) || LANGUAGES[0];
@@ -73,11 +73,16 @@ export default function Navbar() {
                     {/* Desktop Nav Links */}
                     <div className="hidden lg:flex items-center gap-1">
                         {links.map((link) => {
-                            const isActive = url === link.href || (link.href !== '/' && url.startsWith(link.href));
+                            const isHash = link.href.startsWith('#');
+                            const href = isHash ? `/${link.href}` : link.href;
+                            const isActive = url === href || (href !== '/' && url.startsWith(href));
+                            
+                            const Tag = isHash ? 'a' : Link;
+
                             return (
-                                <Link
+                                <Tag
                                     key={link.href}
-                                    href={link.href}
+                                    href={href}
                                     className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
                                         isActive ? 'text-white' : 'text-white/50 hover:text-white/80'
                                     }`}
@@ -96,7 +101,7 @@ export default function Navbar() {
                                             />
                                         )}
                                     </AnimatePresence>
-                                </Link>
+                                </Tag>
                             );
                         })}
                     </div>
@@ -217,23 +222,29 @@ export default function Navbar() {
                         className="lg:hidden overflow-hidden backdrop-blur-heavy bg-harbor-950/95 dark:bg-black/95 border-t border-white/[0.06]"
                     >
                         <div className="px-6 py-4 space-y-1">
-                            {links.map((link, i) => (
-                                <motion.div
-                                    key={link.href}
-                                    initial={{ opacity: 0, x: -20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.08 }}
-                                >
-                                    <Link
-                                        href={link.href}
-                                        className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all ${
-                                            url === link.href ? 'text-white bg-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'
-                                        }`}
+                            {links.map((link, i) => {
+                                const isHash = link.href.startsWith('#');
+                                const href = isHash ? `/${link.href}` : link.href;
+                                const Tag = isHash ? 'a' : Link;
+
+                                return (
+                                    <motion.div
+                                        key={link.href}
+                                        initial={{ opacity: 0, x: -20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.08 }}
                                     >
-                                        {link.label}
-                                    </Link>
-                                </motion.div>
-                            ))}
+                                        <Tag
+                                            href={href}
+                                            className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                                                url === href ? 'text-white bg-white/10' : 'text-white/50 hover:text-white hover:bg-white/5'
+                                            }`}
+                                        >
+                                            {link.label}
+                                        </Tag>
+                                    </motion.div>
+                                );
+                            })}
 
                             {/* Mobile Language Switcher */}
                             <motion.div

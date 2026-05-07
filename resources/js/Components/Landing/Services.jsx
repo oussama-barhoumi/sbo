@@ -114,27 +114,31 @@ export default function Services() {
                         <motion.div
                             key={service.title}
                             variants={cardVars}
-                            className={`glass-card group cursor-pointer p-8 rounded-[2.5rem] transition-all duration-300 ${isDark ? 'bg-white/5 hover:bg-white text-white hover:text-black border-white/10' : 'hover:bg-brand-950 hover:text-white'}`}
                         >
-                            <div className={`w-16 h-16 rounded-3xl ${service.bg} flex items-center justify-center mb-8 transition-all duration-500 group-hover:scale-110 shadow-sm`}>
-                                <div className={`${service.color} ${isDark ? 'group-hover:text-black' : 'group-hover:text-white'}`}>
-                                    {service.icon}
+                            <Link
+                                href="/register-account"
+                                className={`block glass-card group cursor-pointer p-8 rounded-[2.5rem] transition-all duration-300 h-full ${isDark ? 'bg-white/5 hover:bg-white text-white hover:text-black border-white/10' : 'hover:bg-brand-950 hover:text-white'}`}
+                            >
+                                <div className={`w-16 h-16 rounded-3xl ${service.bg} flex items-center justify-center mb-8 transition-all duration-500 group-hover:scale-110 shadow-sm`}>
+                                    <div className={`${service.color} ${isDark ? 'group-hover:text-black' : 'group-hover:text-white'}`}>
+                                        {service.icon}
+                                    </div>
                                 </div>
-                            </div>
-                            
-                            <h3 className="text-2xl font-black mb-3 tracking-tight">
-                                {service.title}
-                            </h3>
-                            <p className="text-sm leading-relaxed mb-8 font-medium opacity-70">
-                                {service.description}
-                            </p>
-                            
-                            <div className="flex items-center gap-2 font-black text-xs uppercase tracking-widest transition-all duration-300 group-hover:gap-4">
-                                {t('services.learnMore')}
-                                <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-                                </svg>
-                            </div>
+                                
+                                <h3 className="text-2xl font-black mb-3 tracking-tight">
+                                    {service.title}
+                                </h3>
+                                <p className="text-sm leading-relaxed mb-8 font-medium opacity-70">
+                                    {service.description}
+                                </p>
+                                
+                                <div className="flex items-center gap-2 font-black text-xs uppercase tracking-widest transition-all duration-300 group-hover:gap-4">
+                                    {t('services.learnMore')}
+                                    <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" strokeWidth={3} stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                                    </svg>
+                                </div>
+                            </Link>
                         </motion.div>
                     ))}
                 </motion.div>

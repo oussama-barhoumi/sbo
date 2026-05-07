@@ -1,5 +1,4 @@
 import React from 'react';
-import { LucideIcon } from 'lucide-react';
 
 const StatsCard = ({ title, value, icon: Icon, trend, color = "indigo" }) => {
     const colorClasses = {

@@ -1,37 +1,35 @@
 import React from 'react';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { useApp } from '@/hooks/useApp';
 
-const StatsCard = ({ title, value, icon: Icon, trend, color = "indigo" }) => {
-    const colorClasses = {
-        indigo: "bg-indigo-500/10 text-indigo-400 shadow-indigo-500/10",
-        emerald: "bg-emerald-500/10 text-emerald-400 shadow-emerald-500/10",
-        rose: "bg-rose-500/10 text-rose-400 shadow-rose-500/10",
-        amber: "bg-amber-500/10 text-amber-400 shadow-amber-500/10",
-    };
+const StatsCard = ({ title, value, icon: Icon, trend, color = "black" }) => {
+    const { t } = useLaravelReactI18n();
+    const { isDark } = useApp();
 
     return (
-        <div className="bg-[#1e293b]/40 backdrop-blur-xl border border-slate-800/50 p-6 rounded-3xl hover:scale-[1.02] transition-all duration-300 group">
+        <div className="bg-white dark:bg-white/5 backdrop-blur-xl border border-gray-100 dark:border-white/10 p-8 rounded-[2.5rem] hover:scale-[1.02] transition-all duration-500 group shadow-sm">
             <div className="flex items-start justify-between">
                 <div>
-                    <p className="text-slate-400 text-sm font-medium mb-1">{title}</p>
-                    <h3 className="text-3xl font-bold text-white tracking-tight">
+                    <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mb-3">{title}</p>
+                    <h3 className="text-4xl font-black text-black dark:text-white tracking-tighter italic">
                         {typeof value === 'number' && title.toLowerCase().includes('balance') 
-                            ? new Intl.NumberFormat('en-MA', { style: 'currency', currency: 'MAD' }).format(value)
+                            ? new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(value)
                             : value}
                     </h3>
                 </div>
-                <div className={`p-3 rounded-2xl ${colorClasses[color]}`}>
+                <div className={`p-4 rounded-2xl bg-black dark:bg-white text-white dark:text-black shadow-xl shadow-black/10 transition-transform duration-500 group-hover:scale-110`}>
                     <Icon className="w-6 h-6" />
                 </div>
             </div>
             
             {trend && (
-                <div className="mt-4 flex items-center gap-2">
-                    <span className={`text-xs font-medium px-2 py-1 rounded-lg ${
-                        trend > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                <div className="mt-8 flex items-center gap-3">
+                    <span className={`text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-lg ${
+                        trend.startsWith('+') ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' : 'bg-red-500/10 text-red-600 dark:text-red-400'
                     }`}>
-                        {trend > 0 ? '+' : ''}{trend}%
+                        {trend}
                     </span>
-                    <span className="text-xs text-slate-500 italic">vs last month</span>
+                    <span className="text-[9px] text-gray-400 dark:text-white/20 font-black uppercase tracking-widest italic">{t('admin.common.vs_last_month')}</span>
                 </div>
             )}
         </div>

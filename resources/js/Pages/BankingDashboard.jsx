@@ -1,6 +1,6 @@
 import { Head, Link } from '@inertiajs/react';
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from 'framer-motion';
+import { useState, useEffect, useCallback, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
     AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer 
 } from 'recharts';
@@ -14,27 +14,19 @@ import {
     ArrowUpRight, 
     ArrowDownLeft, 
     Repeat, 
-    MoreVertical,
     LogOut,
-    Lock,
     Bell,
     Settings,
     User,
     ChevronRight,
-    ArrowRight
+    ArrowRight,
+    Clock,
+    Info,
+    CheckCircle
 } from 'lucide-react';
 import Magnetic from '@/Components/Landing/Animations/Magnetic';
-
-// ── fake data for graph ──────────────────────────────────────────────────────
-const CHART_DATA = [
-    { name: 'Mon', value: 2400 },
-    { name: 'Tue', value: 3200 },
-    { name: 'Wed', value: 2800 },
-    { name: 'Thu', value: 4500 },
-    { name: 'Fri', value: 3800 },
-    { name: 'Sat', value: 5200 },
-    { name: 'Sun', value: 4800 },
-];
+import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { useApp } from '@/hooks/useApp';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 const API = (path, opts = {}) => {
@@ -49,38 +41,96 @@ const API = (path, opts = {}) => {
     }).then(r => r.json());
 };
 
-const fmt = (n, cur = 'MAD') =>
-    new Intl.NumberFormat('fr-MA', { 
-        style: 'currency', 
-        currency: cur === 'DH' || cur === 'MAD' ? 'MAD' : cur, 
-        maximumFractionDigits: 2 
-    }).format(n ?? 0);
+const fmt = (n, cur = 'EUR') => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: cur }).format(n);
 
-// ── sub-components ────────────────────────────────────────────────────────────
-function Modal({ open, onClose, title, children }) {
+// ── Components ───────────────────────────────────────────────────────────────
+function WordReveal({ text, className }) {
+    return (
+        <span className={className}>
+            {text.split(' ').map((word, i) => (
+                <motion.span 
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.1, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+                    className="inline-block mr-[0.2em]"
+                >
+                    {word}
+                </motion.span>
+            ))}
+        </span>
+    );
+}
+
+function TiltCard({ children, className }) {
+    return (
+        <motion.div 
+            whileHover={{ y: -5, transition: { duration: 0.4 } }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+}
+
+function Field({ label, error, children }) {
+    return (
+        <div className="mb-8">
+            <label className="block text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-[0.3em] mb-3 px-1">{label}</label>
+            {children}
+            {error && (
+                <motion.p 
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    className="mt-3 text-[10px] text-red-600 font-black uppercase tracking-widest flex items-center gap-2"
+                >
+                    <span className="w-1.5 h-1.5 bg-red-600 rounded-full" /> {error}
+                </motion.p>
+            )}
+        </div>
+    );
+}
+
+const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/5 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/10'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/10 focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 focus:border-black dark:focus:border-white transition-all duration-500`;
+
+function Alert({ msg, ok }) {
+    if (!msg) return null;
+    return (
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`mb-8 flex items-center gap-4 px-6 py-5 rounded-[2rem] text-sm font-black border transition-colors ${ok ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-red-500/10 text-red-600 border-red-500/20'}`}
+        >
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
+                {ok ? '✓' : '!'}
+            </div>
+            <span className="uppercase tracking-widest text-[10px]">{msg}</span>
+        </motion.div>
+    );
+}
+
+// ── Modals ────────────────────────────────────────────────────────────
+function ModalWrapper({ open, onClose, title, children }) {
+    const { t } = useLaravelReactI18n();
     return (
         <AnimatePresence>
             {open && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
                     <motion.div 
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        className="absolute inset-0 bg-black/80 backdrop-blur-md" 
-                        onClick={onClose} 
+                        initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="absolute inset-0 bg-black/80 backdrop-blur-sm"
                     />
                     <motion.div 
-                        initial={{ scale: 0.9, opacity: 0, y: 30 }}
-                        animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 30 }}
-                        transition={{ type: "spring", damping: 25, stiffness: 300 }}
-                        className="relative bg-white rounded-[3rem] shadow-2xl w-full max-w-md p-10 z-10 border border-white/20" 
-                        onClick={e => e.stopPropagation()}
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }} 
+                        animate={{ opacity: 1, scale: 1, y: 0 }} 
+                        exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                        className="relative w-full max-w-xl bg-white dark:bg-[#0a0a0a] rounded-[3.5rem] p-12 overflow-hidden shadow-2xl transition-colors duration-500"
                     >
                         <div className="flex items-center justify-between mb-10">
-                            <h2 className="text-3xl font-black text-black tracking-tighter">{title}</h2>
-                            <button onClick={onClose} className="w-12 h-12 flex items-center justify-center rounded-full bg-gray-100 hover:bg-black hover:text-white transition-all duration-500 group">
-                                <XIcon className="w-6 h-6 group-hover:rotate-90 transition-transform duration-500" />
+                            <h2 className="text-3xl font-black text-black dark:text-white tracking-tighter uppercase italic">{title}</h2>
+                            <button onClick={onClose} className="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 hover:text-black dark:hover:text-white transition-all">
+                                <Repeat className="w-5 h-5 rotate-45" />
                             </button>
                         </div>
                         {children}
@@ -91,51 +141,9 @@ function Modal({ open, onClose, title, children }) {
     );
 }
 
-const XIcon = ({ className }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-);
-
-function Field({ label, error, children }) {
-    return (
-        <div className="mb-8">
-            <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-3 px-1">{label}</label>
-            {children}
-            {error && (
-                <motion.p 
-                    initial={{ opacity: 0, x: -10 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    className="mt-3 text-[10px] text-black font-black uppercase tracking-widest flex items-center gap-2"
-                >
-                    <span className="w-1.5 h-1.5 bg-black rounded-full" /> {error}
-                </motion.p>
-            )}
-        </div>
-    );
-}
-
-const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 border ${err ? 'border-black' : 'border-gray-100'} rounded-2xl text-black text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-[12px] focus:ring-black/5 focus:border-black transition-all duration-500`;
-
-function Alert({ msg, ok }) {
-    if (!msg) return null;
-    return (
-        <motion.div 
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className={`mb-8 flex items-center gap-4 px-6 py-5 rounded-[2rem] text-sm font-black border ${ok ? 'bg-black text-white border-black' : 'bg-gray-100 border-gray-200 text-black shadow-sm'}`}
-        >
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? 'bg-white text-black' : 'bg-black text-white'}`}>
-                {ok ? '✓' : '!'}
-            </div>
-            <span className="uppercase tracking-widest text-[10px]">{msg}</span>
-        </motion.div>
-    );
-}
-
-// ── Modals ────────────────────────────────────────────────────────────
 function DepositModal({ open, onClose, userId, onSuccess }) {
-    const [form, setForm] = useState({ amount: '', currency: 'DH', method: 'cash' });
+    const { t } = useLaravelReactI18n();
+    const [form, setForm] = useState({ amount: '', currency: 'EUR', method: 'card' });
     const [err, setErr] = useState({});
     const [msg, setMsg] = useState(null);
     const [ok, setOk] = useState(false);
@@ -143,247 +151,84 @@ function DepositModal({ open, onClose, userId, onSuccess }) {
 
     const submit = async (e) => {
         e.preventDefault();
-        if (!form.amount || +form.amount <= 0) { setErr({ amount: 'Invalid Amount' }); return; }
+        if (!form.amount || +form.amount <= 0) { setErr({ amount: t('validation.required') }); return; }
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/deposit', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`Success: ${fmt(res.newBalance)}`); onSuccess(); }
-        else { setOk(false); setMsg(res.message || 'Error'); }
+        if (res.success) { setOk(true); setMsg(`${t('dashboard.modals.deposit.confirm')}: ${fmt(res.newBalance)}`); onSuccess(); }
+        else setMsg(res.message || 'Error');
     };
 
     return (
-        <Modal open={open} onClose={onClose} title="Deposit">
+        <ModalWrapper open={open} onClose={onClose} title={t('dashboard.modals.deposit.title')}>
             <Alert msg={msg} ok={ok} />
             <form onSubmit={submit}>
-                <Field label="Amount" error={err.amount}>
-                    <input type="number" min="1" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0.00" className={inputCls(err.amount)} />
+                <Field label={t('dashboard.modals.deposit.amount')} error={err.amount}>
+                    <input type="number" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className={inputCls(err.amount)} placeholder="0.00" />
                 </Field>
-                <div className="grid grid-cols-2 gap-5 mb-8">
-                    <Field label="Currency">
-                        <select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className={inputCls()}>
-                            {['DH', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
-                        </select>
-                    </Field>
-                    <Field label="Method">
-                        <select value={form.method} onChange={e => setForm(p => ({ ...p, method: e.target.value }))} className={inputCls()}>
-                            {['cash', 'card', 'online'].map(m => <option key={m}>{m}</option>)}
-                        </select>
-                    </Field>
-                </div>
-                <Magnetic>
-                    <button type="submit" disabled={loading} className="w-full bg-black text-white py-6 rounded-[1.8rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50">
-                        {loading ? 'Processing…' : 'Finalize Deposit'}
-                    </button>
-                </Magnetic>
-            </form>
-        </Modal>
-    );
-}
-
-function WithdrawModal({ open, onClose, userId, onSuccess }) {
-    const [form, setForm] = useState({ amount: '', currency: 'DH' });
-    const [err, setErr] = useState({});
-    const [msg, setMsg] = useState(null);
-    const [ok, setOk] = useState(false);
-    const [loading, setLoading] = useState(false);
-
-    const submit = async (e) => {
-        e.preventDefault();
-        if (!form.amount || +form.amount <= 0) { setErr({ amount: 'Invalid Amount' }); return; }
-        setLoading(true); setMsg(null); setErr({});
-        const res = await API('/withdraw', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
-        setLoading(false);
-        if (res.success) { setOk(true); setMsg(`Withdrawn: ${fmt(res.newBalance)}`); onSuccess(); }
-        else { setOk(false); setMsg(res.message); }
-    };
-
-    return (
-        <Modal open={open} onClose={onClose} title="Withdraw">
-            <Alert msg={msg} ok={ok} />
-            <form onSubmit={submit}>
-                <Field label="Amount" error={err.amount}>
-                    <input type="number" min="1" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0.00" className={inputCls(err.amount)} />
-                </Field>
-                <Field label="Currency">
-                    <select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className={inputCls()}>
-                        {['DH', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
+                <Field label={t('dashboard.modals.deposit.method')}>
+                    <select value={form.method} onChange={e => setForm({...form, method: e.target.value})} className={inputCls()}>
+                        <option value="card">Credit / Debit Card</option>
+                        <option value="transfer">Bank Wire</option>
+                        <option value="crypto">Crypto Assets</option>
                     </select>
                 </Field>
-                <Magnetic>
-                    <button type="submit" disabled={loading} className="w-full bg-black text-white py-6 rounded-[1.8rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-800 transition-all active:scale-95 disabled:opacity-50 mt-6">
-                        {loading ? 'Processing…' : 'Process Withdrawal'}
-                    </button>
-                </Magnetic>
+                <button disabled={loading} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
+                    {loading ? 'Processing...' : t('dashboard.modals.deposit.confirm')}
+                </button>
             </form>
-        </Modal>
+        </ModalWrapper>
     );
 }
 
 function TransferModal({ open, onClose, userId, onSuccess }) {
-    const [form, setForm] = useState({ recipientId: '', amount: '', currency: 'DH', note: '' });
+    const { t } = useLaravelReactI18n();
+    const [form, setForm] = useState({ amount: '', recipientId: '', note: '' });
     const [err, setErr] = useState({});
     const [msg, setMsg] = useState(null);
     const [ok, setOk] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [step, setStep] = useState(1); // 1: form, 2: otp
-    const [otp, setOtp] = useState('');
-
-    const nextStep = (e) => {
-        e.preventDefault();
-        const errs = {};
-        if (!form.recipientId) errs.recipientId = 'ID Required';
-        if (!form.amount || +form.amount <= 0) errs.amount = 'Invalid Amount';
-        if (Object.keys(errs).length) { setErr(errs); return; }
-        setStep(2);
-    };
 
     const submit = async (e) => {
         e.preventDefault();
-        if (otp !== '1234') { setErr({ otp: 'Invalid Verification Code' }); return; }
+        let eObj = {};
+        if (!form.amount || +form.amount <= 0) eObj.amount = 'Required';
+        if (!form.recipientId) eObj.recipientId = 'Required';
+        if (Object.keys(eObj).length) { setErr(eObj); return; }
+
         setLoading(true); setMsg(null); setErr({});
-        const res = await API('/transfer', { method: 'POST', body: JSON.stringify({ senderId: userId, recipientId: +form.recipientId, amount: +form.amount, currency: form.currency, note: form.note || null }) });
+        const res = await API('/transfer', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
         setLoading(false);
-        if (res.success) { 
-            setOk(true); 
-            setMsg(`Transferred to ${res.recipientName}`); 
-            onSuccess(); 
-            setTimeout(() => { onClose(); setStep(1); setOtp(''); }, 2000); 
-        } else { 
-            setOk(false); 
-            setMsg(res.message || 'Failed');
-            if (res.isSuspicious) {
-                // Keep the modal open and show specific fraud alert
-                setErr({ otp: 'Security Block: Transaction Flagged' });
-            }
-        }
+        if (res.success) { setOk(true); setMsg(`Transfer Complete: ${fmt(res.newBalance)}`); onSuccess(); }
+        else setMsg(res.message || 'Error');
     };
 
     return (
-        <Modal open={open} onClose={() => { onClose(); setStep(1); setOtp(''); }} title={step === 1 ? "Transfer" : "Verify Transfer"}>
+        <ModalWrapper open={open} onClose={onClose} title={t('dashboard.modals.transfer.title')}>
             <Alert msg={msg} ok={ok} />
-            
-            {step === 1 ? (
-                <form onSubmit={nextStep}>
-                    <Field label="Recipient ID" error={err.recipientId}>
-                        <input type="number" value={form.recipientId} onChange={e => setForm(p => ({ ...p, recipientId: e.target.value }))} placeholder="e.g. 1004" className={inputCls(err.recipientId)} />
-                    </Field>
-                    <div className="grid grid-cols-2 gap-5">
-                        <Field label="Amount" error={err.amount}>
-                            <input type="number" min="1" step="0.01" value={form.amount} onChange={e => setForm(p => ({ ...p, amount: e.target.value }))} placeholder="0.00" className={inputCls(err.amount)} />
-                        </Field>
-                        <Field label="Currency">
-                            <select value={form.currency} onChange={e => setForm(p => ({ ...p, currency: e.target.value }))} className={inputCls()}>
-                                {['DH', 'USD', 'EUR'].map(c => <option key={c}>{c}</option>)}
-                            </select>
-                        </Field>
-                    </div>
-                    <Field label="Note (optional)">
-                        <input type="text" value={form.note} onChange={e => setForm(p => ({ ...p, note: e.target.value }))} placeholder="Payment details" className={inputCls()} />
-                    </Field>
-                    <Magnetic>
-                        <button type="submit" className="w-full bg-black text-white py-6 rounded-[1.8rem] font-black text-xs uppercase tracking-[0.3em] hover:bg-gray-800 transition-all active:scale-95 mt-4">
-                            Next: Verify
-                        </button>
-                    </Magnetic>
-                </form>
-            ) : (
-                <form onSubmit={submit}>
-                    <div className="mb-8 p-6 bg-gray-50 rounded-[2rem] border border-gray-100">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2 text-center">Confirming Transfer</p>
-                        <p className="text-2xl font-black text-center">{fmt(form.amount, form.currency)}</p>
-                        <p className="text-[10px] font-bold text-center text-gray-400 mt-1 uppercase italic">To Recipient #{form.recipientId}</p>
-                    </div>
-                    <Field label="Secure OTP (Use 1234)" error={err.otp}>
-                        <input 
-                            type="text" 
-                            maxLength="4" 
-                            value={otp} 
-                            onChange={e => setOtp(e.target.value)} 
-                            placeholder="0000" 
-                            className={`${inputCls(err.otp)} text-center text-4xl tracking-[1em] font-black`} 
-                        />
-                    </Field>
-                    <div className="flex gap-4 mt-6">
-                        <button type="button" onClick={() => setStep(1)} className="flex-1 py-5 bg-gray-100 rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest">Back</button>
-                        <button type="submit" disabled={loading} className="flex-1 py-5 bg-black text-white rounded-[1.5rem] text-[10px] font-black uppercase tracking-widest disabled:opacity-50">
-                            {loading ? 'Confirming...' : 'Authorize'}
-                        </button>
-                    </div>
-                </form>
-            )}
-        </Modal>
-    );
-}
-
-// ── Animations ────────────────────────────────────────────────────────────
-const WordReveal = ({ text, className }) => {
-    return (
-        <span className={className}>
-            {text.split(' ').map((word, i) => (
-                <span key={i} className="inline-block overflow-hidden mr-[0.2em] pb-[0.1em]">
-                    <motion.span
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        transition={{ 
-                            duration: 0.8, 
-                            delay: i * 0.1, 
-                            ease: [0.22, 1, 0.36, 1] 
-                        }}
-                        className="inline-block"
-                    >
-                        {word}
-                    </motion.span>
-                </span>
-            ))}
-        </span>
-    );
-};
-
-function TiltCard({ children, className }) {
-    const cardRef = useRef(null);
-    const [rotateX, setRotateX] = useState(0);
-    const [rotateY, setRotateY] = useState(0);
-
-    const handleMouseMove = (e) => {
-        if (!cardRef.current) return;
-        const rect = cardRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        const centerX = rect.width / 2;
-        const centerY = rect.height / 2;
-        setRotateX((y - centerY) / 20);
-        setRotateY((centerX - x) / 20);
-    };
-
-    const handleMouseLeave = () => {
-        setRotateX(0);
-        setRotateY(0);
-    };
-
-    return (
-        <motion.div
-            ref={cardRef}
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-            animate={{ rotateX, rotateY }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            style={{ transformStyle: "preserve-3d" }}
-            className={className}
-        >
-            <div style={{ transform: "translateZ(50px)" }}>
-                {children}
-            </div>
-        </motion.div>
+            <form onSubmit={submit}>
+                <Field label={t('dashboard.modals.transfer.recipient')} error={err.recipientId}>
+                    <input value={form.recipientId} onChange={e => setForm({...form, recipientId: e.target.value})} className={inputCls(err.recipientId)} placeholder="HB-XXXX-XXXX" />
+                </Field>
+                <Field label={t('dashboard.modals.deposit.amount')} error={err.amount}>
+                    <input type="number" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className={inputCls(err.amount)} placeholder="0.00" />
+                </Field>
+                <button disabled={loading} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
+                    {loading ? 'Processing...' : t('dashboard.modals.transfer.confirm')}
+                </button>
+            </form>
+        </ModalWrapper>
     );
 }
 
 // ── Main Page Component ───────────────────────────────────────────────────────
 export default function BankingDashboard() {
+    const { t } = useLaravelReactI18n();
+    const { isDark } = useApp();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [authErr, setAuthErr] = useState(false);
     const [modal, setModal] = useState(null);
-    const [timeoutProgress, setTimeoutProgress] = useState(100);
 
     const loadProfile = useCallback(async () => {
         const res = await API('/profile');
@@ -395,14 +240,7 @@ export default function BankingDashboard() {
         const token = localStorage.getItem('bank_token');
         if (!token) { setAuthErr(true); setLoading(false); return; }
         loadProfile().finally(() => setLoading(false));
-    }, []);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            setTimeoutProgress(prev => (prev > 0 ? prev - 0.1 : 0));
-        }, 1000);
-        return () => clearInterval(interval);
-    }, []);
+    }, [loadProfile]);
 
     const logout = async () => {
         await API('/logout', { method: 'POST' });
@@ -410,27 +248,16 @@ export default function BankingDashboard() {
         window.location.href = '/login';
     };
 
-    const CustomTooltip = ({ active, payload }) => {
-        if (active && payload && payload.length) {
-            return (
-                <div className="bg-black text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-2xl border border-white/10">
-                    {fmt(payload[0].value)}
-                </div>
-            );
-        }
-        return null;
-    };
-
     if (loading) return (
-        <div className="min-h-screen bg-white flex items-center justify-center font-sans overflow-hidden">
+        <div className="min-h-screen bg-white dark:bg-[#050505] flex items-center justify-center font-sans overflow-hidden transition-colors duration-500">
             <div className="relative">
                 <motion.div 
                     animate={{ rotate: 360, scale: [1, 1.1, 1] }}
                     transition={{ repeat: Infinity, duration: 2, ease: "easeInOut" }}
-                    className="w-24 h-24 border-[1px] border-gray-100 border-t-black rounded-full" 
+                    className="w-24 h-24 border-[1px] border-gray-100 dark:border-white/5 border-t-black dark:border-t-white rounded-full" 
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                    <span className="text-[8px] font-black uppercase tracking-[0.4em] text-black">Secure</span>
+                    <span className="text-[8px] font-black uppercase tracking-[0.4em] text-black dark:text-white">Secure</span>
                 </div>
             </div>
         </div>
@@ -440,141 +267,132 @@ export default function BankingDashboard() {
 
     const containerVars = {
         initial: { opacity: 0 },
-        animate: { opacity: 1, transition: { staggerChildren: 0.15, delayChildren: 0.3 } }
+        animate: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
     };
 
     const itemVars = {
-        initial: { opacity: 0, y: 40, filter: "blur(10px)" },
-        animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 1, ease: [0.22, 1, 0.36, 1] } }
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] } }
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] text-black dark:text-white font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black relative overflow-x-hidden transition-colors duration-500">
-            <Head title="Premium Banking — HarborBank" />
-
-            {/* Decorative background shapes */}
-            <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-                <motion.div 
-                    animate={{ x: [0, 100, 0], y: [0, 50, 0] }}
-                    transition={{ duration: 20, repeat: Infinity }}
-                    className="absolute -top-64 -left-64 w-[800px] h-[800px] bg-gray-100/50 dark:bg-white/5 rounded-full blur-3xl opacity-30" 
-                />
-            </div>
-
-            <DepositModal  open={modal === 'deposit'}  onClose={() => setModal(null)} userId={profile?.userId} onSuccess={loadProfile} />
-            <WithdrawModal open={modal === 'withdraw'} onClose={() => setModal(null)} userId={profile?.userId} onSuccess={loadProfile} />
-            <TransferModal open={modal === 'transfer'} onClose={() => setModal(null)} userId={profile?.userId} onSuccess={loadProfile} />
-
-            {/* Premium Navbar */}
-            <nav className="bg-white/70 dark:bg-black/70 backdrop-blur-3xl border-b border-gray-100 dark:border-white/5 px-10 py-6 flex items-center justify-between sticky top-0 z-50 transition-colors">
-                <div className="flex items-center gap-16">
-                    <Link href="/" className="flex items-center gap-4 group">
-                        <div className="w-10 h-10 bg-black dark:bg-white rounded-[1.2rem] flex items-center justify-center transition-all duration-500 group-hover:rotate-[15deg] group-hover:scale-110 shadow-lg shadow-black/10">
-                            <svg className="w-5 h-5 text-white dark:text-black" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a3 3 0 00-3 3c0 1.66 1.34 3 3 3s3-1.34 3-3a3 3 0 00-3-3zm0 8v12m0 0c-4-1-7-4-7-8h3m4 8c4-1 7-4 7-8h-3" />
-                            </svg>
-                        </div>
-                        <span className="font-black text-2xl tracking-tighter uppercase italic dark:text-white">Harbor</span>
-                    </Link>
-                    <div className="hidden lg:flex items-center gap-10 text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20">
-                        <Link href={route('dashboard')} className={`${route().current('dashboard') ? 'text-black dark:text-white border-b-2 border-black dark:border-white pb-1' : 'hover:text-black dark:hover:text-white'} transition-all`}>Overview</Link>
-                        <Link href={route('treasury')} className={`${route().current('treasury') ? 'text-black dark:text-white border-b-2 border-black dark:border-white pb-1' : 'hover:text-black dark:hover:text-white'} transition-all`}>Treasury</Link>
-                        <Link href={route('wealth')} className={`${route().current('wealth') ? 'text-black dark:text-white border-b-2 border-black dark:border-white pb-1' : 'hover:text-black dark:hover:text-white'} transition-all`}>Wealth</Link>
+        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-500">
+            <Head title="Banking Command Center" />
+            
+            {/* Global Navbar */}
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 px-10 py-6 flex items-center justify-between transition-colors">
+                <div className="flex items-center gap-12">
+                    <Link href="/" className="text-2xl font-black tracking-tighter italic dark:text-white">HB.</Link>
+                    <div className="hidden md:flex items-center gap-8">
+                        {['Banking', 'Treasury', 'Wealth'].map((item) => (
+                            <Link 
+                                key={item} 
+                                href={`/${item.toLowerCase()}`} 
+                                className={`text-[10px] font-black uppercase tracking-widest transition-colors ${item === 'Banking' ? 'text-black dark:text-white' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}
+                            >
+                                {item}
+                            </Link>
+                        ))}
                     </div>
                 </div>
-                <div className="flex items-center gap-8">
-                    <span className="text-sm font-black hidden sm:block dark:text-white">{profile?.name}</span>
-                    <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center border border-black/10 dark:border-white/10 overflow-hidden shadow-xl">
-                        {profile?.name ? <span className="font-black text-sm italic">{profile.name[0]}</span> : <User className="w-5 h-5" />}
+                <div className="flex items-center gap-6">
+                    <div className="hidden sm:flex items-center gap-4 px-4 py-2 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/10">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        <span className="text-[9px] font-black uppercase tracking-widest text-black dark:text-white">Nodes Verified</span>
                     </div>
+                    <button className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white transition-all">
+                        <Bell className="w-4 h-4" />
+                    </button>
+                    <button className="w-10 h-10 rounded-xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-xl">
+                        <User className="w-4 h-4" />
+                    </button>
                 </div>
             </nav>
 
-            <motion.div 
-                variants={containerVars}
-                initial="initial"
-                animate="animate"
-                className="max-w-[1600px] mx-auto px-10 py-12 relative z-10"
-            >
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-                    
-                    {/* Header Area */}
-                    <motion.div variants={itemVars} className="lg:col-span-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8 pb-8 border-b border-gray-100 dark:border-white/5 transition-colors">
+            <main className="pt-32 pb-20 px-10 max-w-[1600px] mx-auto">
+                <motion.div 
+                    variants={containerVars}
+                    initial="initial"
+                    animate="animate"
+                    className="grid grid-cols-1 lg:grid-cols-12 gap-12"
+                >
+                    {/* Welcome Header */}
+                    <motion.div variants={itemVars} className="lg:col-span-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8 pb-10 border-b border-gray-100 dark:border-white/5">
                         <div>
                             <WordReveal 
-                                text={`Hello, ${profile?.name?.split(' ')[0] || 'Member'}`} 
-                                className="text-7xl font-black tracking-tighter block mb-3 leading-[0.8] dark:text-white" 
+                                text={`${t('dashboard.header.hello')}, ${profile?.name?.split(' ')[0] || 'Member'}`} 
+                                className="text-8xl font-black tracking-tighter block mb-4 leading-[0.8] text-black dark:text-white italic" 
                             />
-                            <p className="text-gray-400 dark:text-white/40 font-medium tracking-tight text-xl">Command center established for <span className="text-black dark:text-white font-black uppercase text-sm ml-1 tracking-[0.2em]">Session 0x4A</span></p>
+                            <p className="text-gray-400 dark:text-white/40 font-medium tracking-tight text-xl">
+                                {t('dashboard.header.session')} <span className="text-black dark:text-white font-black uppercase text-sm ml-1 tracking-[0.2em]">Session 0x4A</span>
+                            </p>
                         </div>
                         <div className="flex gap-4">
                             <Magnetic>
-                                <button onClick={logout} className="flex items-center gap-4 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-[1.8rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-gray-800 dark:hover:bg-gray-200 transition-all shadow-xl shadow-black/10 dark:shadow-none">
-                                    <LogOut className="w-4 h-4" /> Sign Out
+                                <button onClick={logout} className="flex items-center gap-4 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-2xl">
+                                    <LogOut className="w-4 h-4" /> {t('dashboard.header.sign_out')}
                                 </button>
                             </Magnetic>
                         </div>
                     </motion.div>
 
-                    {/* Stats & Graph Section */}
+                    {/* Left Column: Stats & Performance */}
                     <div className="lg:col-span-8 space-y-12">
-                        
-                        {/* Solde & Quick Stats */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <TiltCard className="bg-white dark:bg-[#0a0a0a] rounded-[4rem] p-12 border border-gray-100 dark:border-white/5 shadow-2xl shadow-gray-200/50 dark:shadow-none group cursor-pointer overflow-hidden relative transition-colors">
-                                <div className="absolute top-0 right-0 w-32 h-32 bg-gray-50 dark:bg-white/5 rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-1000" />
+                            <TiltCard className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm relative overflow-hidden group transition-colors">
+                                <div className="absolute top-0 right-0 w-48 h-48 bg-black/[0.02] dark:bg-white/[0.02] rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-1000" />
                                 <div className="relative z-10">
-                                    <div className="w-14 h-14 bg-gray-950 dark:bg-white rounded-2xl flex items-center justify-center mb-10 border border-white/10 dark:border-black/10 shadow-2xl">
+                                    <div className="w-14 h-14 bg-black dark:bg-white rounded-2xl flex items-center justify-center mb-10 shadow-2xl border border-white/10">
                                         <Landmark className="w-7 h-7 text-white dark:text-black" />
                                     </div>
-                                    <p className="text-[11px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-3">Total Liquid Assets</p>
-                                    <h3 className="text-5xl font-black tracking-tighter mb-4 tabular-nums dark:text-white">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-3">{t('dashboard.stats.liquid_assets')}</p>
+                                    <h3 className="text-6xl font-black tracking-tighter mb-6 italic text-black dark:text-white">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
                                     
-                                    <div className="flex flex-col gap-1 mb-8">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-300 dark:text-white/10">Account ID: <span className="text-black dark:text-white">{profile?.accountNumber}</span></p>
+                                    <div className="space-y-4">
+                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-300 dark:text-white/10">{t('dashboard.stats.account_id')}: <span className="text-black dark:text-white ml-2">{profile?.accountNumber}</span></p>
                                         <div className="flex items-center gap-3">
-                                            <div className="px-3 py-1 bg-black dark:bg-white text-white dark:text-black text-[9px] font-black uppercase rounded-lg tracking-widest">+12.4%</div>
-                                            <span className="text-[10px] font-black text-gray-300 dark:text-white/10 uppercase tracking-widest">Active Growth</span>
+                                            <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase rounded-lg tracking-widest border border-emerald-500/20">+12.4%</div>
+                                            <span className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{t('dashboard.stats.active_growth')}</span>
                                         </div>
                                     </div>
                                 </div>
                             </TiltCard>
 
                             <div className="grid grid-rows-2 gap-8">
-                                <div className="bg-white dark:bg-[#0a0a0a] rounded-[3rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-200/30 dark:shadow-none flex items-center justify-between transition-colors">
+                                <div className="bg-white dark:bg-white/5 rounded-[2.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm flex items-center justify-between transition-colors">
                                     <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-1">Monthly Yield</p>
-                                        <p className="text-2xl font-black tabular-nums dark:text-white">{fmt(840.00, 'MAD')}</p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-2">{t('dashboard.stats.monthly_yield')}</p>
+                                        <p className="text-3xl font-black italic text-black dark:text-white">{fmt(840.00, 'EUR')}</p>
                                     </div>
                                     <div className="w-12 h-12 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center">
                                         <TrendingUp className="w-6 h-6 text-black dark:text-white" />
                                     </div>
                                 </div>
-                                <div className="bg-black dark:bg-white text-white dark:text-black rounded-[3rem] p-8 shadow-2xl shadow-black/20 dark:shadow-none flex items-center justify-between relative overflow-hidden transition-colors">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent dark:from-black/5 dark:to-transparent opacity-50" />
+                                <div className="bg-black dark:bg-white text-white dark:text-black rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden transition-colors">
+                                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent dark:from-black/5 opacity-50" />
                                     <div className="relative z-10">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-50 mb-1">Security Score</p>
-                                        <p className="text-2xl font-black tabular-nums">98.2<span className="text-xs opacity-50 ml-1">/100</span></p>
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">{t('dashboard.stats.security_score')}</p>
+                                        <p className="text-3xl font-black italic">98.2<span className="text-sm opacity-40 ml-1">/100</span></p>
                                     </div>
-                                    <ShieldCheck className="w-10 h-10 text-white dark:text-black relative z-10" />
+                                    <ShieldCheck className="w-12 h-12 absolute right-10 top-1/2 -translate-y-1/2 opacity-20" />
                                 </div>
                             </div>
                         </div>
 
-                        {/* Graph Section */}
-                        <motion.div variants={itemVars} className="bg-white dark:bg-[#0a0a0a] rounded-[4rem] p-12 border border-gray-100 dark:border-white/5 shadow-2xl shadow-gray-200/50 dark:shadow-none transition-colors">
+                        {/* Chart */}
+                        <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
                             <div className="flex items-center justify-between mb-12">
                                 <div>
-                                    <h3 className="text-3xl font-black tracking-tighter mb-2 dark:text-white">Performance Analytics</h3>
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-1.5 h-1.5 bg-black dark:bg-white rounded-full animate-pulse" />
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20">7-Day Transaction Volume</p>
+                                    <h3 className="text-3xl font-black tracking-tighter mb-2 text-black dark:text-white uppercase italic">{t('dashboard.performance.title')}</h3>
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20">{t('dashboard.performance.subtitle')}</p>
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    {['1W', '1M', '1Y'].map(t => (
-                                        <button key={t} className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${t === '1W' ? 'bg-black dark:bg-white text-white dark:text-black shadow-xl' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:bg-gray-100 dark:hover:bg-white/10'}`}>
-                                            {t}
+                                    {['week', 'month', 'year'].map(period => (
+                                        <button key={period} className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${period === 'week' ? 'bg-black dark:bg-white text-white dark:text-black shadow-xl' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:bg-gray-100 dark:hover:bg-white/10'}`}>
+                                            {t(`dashboard.performance.${period}`)}
                                         </button>
                                     ))}
                                 </div>
@@ -582,31 +400,47 @@ export default function BankingDashboard() {
                             
                             <div className="h-[350px] w-full">
                                 <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={profile?.chartData || CHART_DATA}>
+                                    <AreaChart data={profile?.chartData || [
+                                        { name: 'Mon', value: 2400 },
+                                        { name: 'Tue', value: 3200 },
+                                        { name: 'Wed', value: 2800 },
+                                        { name: 'Thu', value: 4500 },
+                                        { name: 'Fri', value: 3800 },
+                                        { name: 'Sat', value: 5200 },
+                                        { name: 'Sun', value: 4800 },
+                                    ]}>
                                         <defs>
                                             <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor="#000" stopOpacity={0.05}/>
-                                                <stop offset="95%" stopColor="#000" stopOpacity={0}/>
+                                                <stop offset="5%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0.05}/>
+                                                <stop offset="95%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0}/>
                                             </linearGradient>
                                         </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#F3F4F6" />
+                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"} />
                                         <XAxis 
                                             dataKey="name" 
                                             axisLine={false} 
                                             tickLine={false} 
-                                            tick={{ fontSize: 10, fontWeight: 900, fill: '#D1D5DB' }}
+                                            tick={{ fontSize: 10, fontWeight: 900, fill: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)" }}
                                             dy={10}
                                         />
                                         <YAxis hide />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#000', strokeWidth: 1 }} />
+                                        <Tooltip 
+                                            contentStyle={{ 
+                                                backgroundColor: isDark ? "#0a0a0a" : "white", 
+                                                border: "none", 
+                                                borderRadius: "16px", 
+                                                boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+                                                fontSize: "12px",
+                                                fontWeight: 900
+                                            }}
+                                        />
                                         <Area 
                                             type="monotone" 
                                             dataKey="value" 
-                                            stroke="#000" 
+                                            stroke={isDark ? "white" : "black"} 
                                             strokeWidth={4} 
                                             fillOpacity={1} 
                                             fill="url(#colorValue)" 
-                                            animationDuration={2000}
                                         />
                                     </AreaChart>
                                 </ResponsiveContainer>
@@ -614,113 +448,82 @@ export default function BankingDashboard() {
                         </motion.div>
                     </div>
 
-                    {/* Right Panel: Transactions & Actions */}
-                    <div className="lg:col-span-4 space-y-12">
-                        
-                        {/* Actions */}
-                        <motion.div variants={itemVars} className="bg-white dark:bg-[#0a0a0a] rounded-[4rem] p-8 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-200/30 dark:shadow-none space-y-4 transition-colors">
-                            <button onClick={() => setModal('transfer')} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-[2.5rem] flex items-center justify-between px-10 hover:bg-gray-800 dark:hover:bg-gray-200 transition-all group overflow-hidden relative shadow-2xl shadow-black/20 dark:shadow-none">
-                                <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent dark:from-black/10 dark:to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
-                                <span className="text-xs font-black uppercase tracking-[0.4em] relative z-10">Transfer</span>
-                                <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform relative z-10" />
-                            </button>
+                    {/* Right Column: Actions & Ledger */}
+                    <div className="lg:col-span-4 space-y-8">
+                        {/* Quick Actions */}
+                        <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
+                            <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic mb-8">Asset Operations</h3>
                             <div className="grid grid-cols-2 gap-4">
-                                <button onClick={() => setModal('deposit')} className="py-6 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-500 shadow-sm">Deposit</button>
-                                <button onClick={() => setModal('withdraw')} className="py-6 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-[2.5rem] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-500 shadow-sm">Withdraw</button>
+                                <button onClick={() => setModal('deposit')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
+                                    <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                        <ArrowDownLeft className="w-6 h-6" />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">Deposit</span>
+                                </button>
+                                <button onClick={() => setModal('transfer')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
+                                    <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                        <ArrowUpRight className="w-6 h-6" />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">Transfer</span>
+                                </button>
                             </div>
                         </motion.div>
 
-                        {/* Recent Transactions */}
-                        <motion.div variants={itemVars} className="bg-white dark:bg-[#0a0a0a] rounded-[4rem] p-10 border border-gray-100 dark:border-white/5 shadow-2xl shadow-gray-200/50 dark:shadow-none h-full max-h-[700px] flex flex-col transition-colors">
+                        {/* Recent Ledger */}
+                        <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm h-[600px] flex flex-col transition-colors">
                             <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-2xl font-black tracking-tighter dark:text-white">Activity Ledger</h3>
-                                <div className="flex gap-2">
-                                    <button 
-                                        onClick={() => window.print()}
-                                        className="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-full flex items-center justify-center text-gray-300 dark:text-white/20 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all no-print"
-                                        title="Download PDF Statement"
-                                    >
-                                        <ArrowDownLeft className="w-5 h-5 rotate-180" />
-                                    </button>
-                                </div>
+                                <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic">{t('dashboard.recent_ledger')}</h3>
+                                <Activity className="w-5 h-5 text-gray-400 dark:text-white/20" />
                             </div>
-
-                            {/* Search Filter */}
-                            <div className="relative mb-8 no-print">
-                                <input 
-                                    type="text" 
-                                    placeholder="Search transactions..." 
-                                    className="w-full bg-gray-50 dark:bg-white/5 border-none rounded-2xl py-4 pl-12 text-xs font-bold focus:ring-2 focus:ring-black/5 dark:focus:ring-white/5 transition-all dark:text-white dark:placeholder-white/10"
-                                    onChange={(e) => setSearchQuery(e.target.value)}
-                                />
-                                <HistoryIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 dark:text-white/20" />
-                            </div>
-
-                            <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1 print-area">
-                                {/* Print Header (Hidden on screen) */}
-                                <div className="hidden print:block mb-10 border-b-2 border-black pb-8">
-                                    <div className="flex justify-between items-end">
-                                        <div>
-                                            <h1 className="text-4xl font-black tracking-tighter uppercase italic mb-1">HarborBank</h1>
-                                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Official Financial Statement</p>
+                            
+                            <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                                {(profile?.ledger || []).length > 0 ? (
+                                    profile.ledger.map((entry, i) => (
+                                        <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-black/20 transition-all group">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${entry.type === 'credit' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
+                                                    {entry.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
+                                                </div>
+                                                <div>
+                                                    <p className="text-[11px] font-black uppercase tracking-tight text-black dark:text-white">{entry.description || 'Institutional Trx'}</p>
+                                                    <div className="flex items-center gap-2 mt-0.5">
+                                                        <Clock className="w-3 h-3 text-gray-300 dark:text-white/10" />
+                                                        <p className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{new Date(entry.created_at).toLocaleDateString()}</p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="text-right">
+                                                <p className={`text-xs font-black italic ${entry.type === 'credit' ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                    {entry.type === 'credit' ? '+' : '-'}{fmt(entry.amount, profile.currency)}
+                                                </p>
+                                            </div>
                                         </div>
-                                        <div className="text-right">
-                                            <p className="text-[10px] font-black uppercase tracking-widest">Date: {new Date().toLocaleDateString()}</p>
-                                            <p className="text-[10px] font-black uppercase tracking-widest">Account: {profile?.accountNumber}</p>
-                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="flex-1 flex flex-col items-center justify-center text-center opacity-30">
+                                        <Info className="w-12 h-12 mb-4" />
+                                        <p className="text-[10px] font-black uppercase tracking-widest">{t('dashboard.no_history')}</p>
                                     </div>
-                                </div>
-                                {(profile?.transactions?.filter(t => 
-                                    t.counterparty_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                    t.amount.toString().includes(searchQuery)
-                                ).length > 0 ? profile.transactions.filter(t => 
-                                    t.counterparty_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                                    t.amount.toString().includes(searchQuery)
-                                ) : [
-                                    { icon: <Globe />, label: 'Swift Transfer', date: 'Oct 24', amount: -450.00 },
-                                    { icon: <CreditCard />, label: 'POS Terminal', date: 'Oct 22', amount: -4.50 },
-                                    { icon: <TrendingUp />, label: 'Asset Yield', date: 'Oct 21', amount: 125.40 },
-                                    { icon: <Landmark />, label: 'Vault Deposit', date: 'Oct 20', amount: 2000.00 },
-                                    { icon: <ArrowDownLeft />, label: 'Refund', date: 'Oct 19', amount: 50.00 },
-                                ]).map((txn, i) => (
-                                    <motion.div 
-                                        key={i} 
-                                        whileHover={{ x: 5 }}
-                                        className="flex items-center justify-between p-5 rounded-[2.5rem] hover:bg-gray-50 dark:hover:bg-white/5 transition-all cursor-pointer group border border-transparent hover:border-gray-100 dark:hover:border-white/5"
-                                    >
-                                        <div className="flex items-center gap-5">
-                                            <div className="w-14 h-14 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center text-black dark:text-white border border-gray-100 dark:border-white/10 transition-all duration-500 group-hover:bg-black dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-black group-hover:scale-105">
-                                                {txn.icon || <Globe />}
-                                            </div>
-                                            <div>
-                                                <p className="text-sm font-black tracking-tighter uppercase italic dark:text-white">{txn.label || txn.description}</p>
-                                                <p className="text-[9px] font-bold text-gray-400 dark:text-white/20 uppercase tracking-widest">{txn.date}</p>
-                                            </div>
-                                        </div>
-                                        <p className="text-sm font-black tabular-nums dark:text-white">
-                                            {txn.amount < 0 ? '-' : '+'}{fmt(Math.abs(txn.amount), 'MAD').replace('MAD', '')}
-                                        </p>
-                                    </motion.div>
-                                ))}
+                                )}
                             </div>
                         </motion.div>
                     </div>
-                </div>
-            </motion.div>
+                </motion.div>
+            </main>
 
-            <footer className="max-w-[1600px] mx-auto px-10 py-16 border-t border-gray-100 dark:border-white/5 flex flex-col md:flex-row items-center justify-between gap-10 opacity-30 transition-colors">
-                <p className="text-[9px] font-black uppercase tracking-[0.5em] dark:text-white">Harbor Private Client Services © 2026</p>
-                <div className="flex gap-10 text-[9px] font-black uppercase tracking-[0.5em] dark:text-white">
-                    <a href="#" className="hover:text-black dark:hover:text-white">Privacy</a>
-                    <a href="#" className="hover:text-black dark:hover:text-white">Security</a>
-                </div>
-            </footer>
+            {/* Modals */}
+            <DepositModal 
+                open={modal === 'deposit'} 
+                onClose={() => setModal(null)} 
+                userId={profile?.id} 
+                onSuccess={loadProfile} 
+            />
+            <TransferModal 
+                open={modal === 'transfer'} 
+                onClose={() => setModal(null)} 
+                userId={profile?.id} 
+                onSuccess={loadProfile} 
+            />
         </div>
     );
 }
-
-const HistoryIcon = ({ className }) => (
-    <svg className={className} fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-    </svg>
-);

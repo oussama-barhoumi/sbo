@@ -5,21 +5,21 @@ import {
     Users, 
     ShieldCheck, 
     History, 
-    Settings, 
     LogOut,
-    TrendingUp,
     Zap
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 const Sidebar = () => {
     const { url } = usePage();
+    const { t } = useLaravelReactI18n();
 
     const menuItems = [
-        { name: 'Identity Oversight', icon: LayoutDashboard, href: '/admin/dashboard' },
-        { name: 'Client Directory', icon: Users, href: '/admin/users' },
-        { name: 'Protocol Officers', icon: ShieldCheck, href: '/admin/admins' },
-        { name: 'Security Ledger', icon: History, href: '/admin/audit-logs' },
+        { name: t('admin.sidebar.menu.oversight'), icon: LayoutDashboard, href: '/admin/dashboard' },
+        { name: t('admin.sidebar.menu.directory'), icon: Users, href: '/admin/users' },
+        { name: t('admin.sidebar.menu.protocol'), icon: ShieldCheck, href: '/admin/admins' },
+        { name: t('admin.sidebar.menu.ledger'), icon: History, href: '/admin/audit-logs' },
     ];
 
     return (
@@ -31,10 +31,10 @@ const Sidebar = () => {
                     </div>
                     <div>
                         <span className="block text-xl font-black tracking-tighter uppercase italic leading-none dark:text-white">
-                            Harbor
+                            {t('admin.sidebar.title')}
                         </span>
                         <span className="block text-[8px] font-black uppercase tracking-[0.4em] text-gray-300 dark:text-white/20 mt-1">
-                            Admin Command
+                            {t('admin.sidebar.subtitle')}
                         </span>
                     </div>
                 </div>
@@ -73,7 +73,7 @@ const Sidebar = () => {
                         className="flex items-center gap-4 px-5 py-4 rounded-2xl w-full text-gray-400 dark:text-white/20 hover:bg-black dark:hover:bg-white hover:text-white dark:hover:text-black transition-all duration-500 group"
                     >
                         <LogOut className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
-                        <span className="text-[10px] font-black uppercase tracking-widest">Terminate Session</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest">{t('admin.sidebar.logout')}</span>
                     </Link>
                 </div>
             </div>

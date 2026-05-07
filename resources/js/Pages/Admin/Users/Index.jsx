@@ -9,21 +9,21 @@ import {
     MoreVertical, 
     AlertCircle, 
     CheckCircle, 
-    Ban, 
     Eye,
     ChevronLeft,
     ChevronRight,
     AlertTriangle,
-    ShieldCheck,
-    UserCheck,
-    UserX
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { useApp } from '@/hooks/useApp';
 
 const UsersIndex = ({ users, filters }) => {
     const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [actionType, setActionType] = useState('block'); // 'block' or 'unblock'
+    const { t } = useLaravelReactI18n();
+    const { isDark } = useApp();
 
     const { data, setData, post, processing, reset, errors } = useForm({
         reason: '',
@@ -48,231 +48,201 @@ const UsersIndex = ({ users, filters }) => {
 
     const handleSearch = (e) => {
         const value = e.target.value;
-        router.get('/admin/users', { search: value, status: filters.status }, { preserveState: true, replace: true });
-    };
-
-    const handleStatusFilter = (status) => {
-        router.get('/admin/users', { search: filters.search, status: status }, { preserveState: true });
-    };
-
-    const containerVars = {
-        initial: { opacity: 0 },
-        animate: { opacity: 1, transition: { staggerChildren: 0.1 } }
-    };
-
-    const itemVars = {
-        initial: { opacity: 0, y: 20 },
-        animate: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] } }
+        router.get('/admin/users', { ...filters, search: value }, {
+            preserveState: true,
+            replace: true,
+        });
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex font-sans selection:bg-black selection:text-white">
-            <Head title="Client Directory — HarborBank Admin" />
+        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] flex font-sans transition-colors duration-500">
+            <Head title={t('admin.page.directory.head')} />
             
             <Sidebar />
 
             <main className="flex-1 ml-72">
-                <Header title="Identity Oversight" />
+                <Header title={t('admin.users.title')} />
 
-                <motion.div 
-                    variants={containerVars}
-                    initial="initial"
-                    animate="animate"
-                    className="p-10 space-y-10"
-                >
-                    {/* Filter & Search Bar */}
-                    <motion.div variants={itemVars} className="flex flex-col lg:flex-row gap-6 justify-between items-center bg-white p-6 rounded-[2.5rem] border border-gray-200 shadow-xl shadow-gray-200/50">
-                        <div className="relative w-full lg:w-96 group">
-                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 group-focus-within:text-black transition-colors" />
+                <div className="p-10 space-y-8">
+                    {/* Toolbar */}
+                    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="relative group flex-1 max-w-xl">
+                            <Search className="absolute left-5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 dark:text-white/20 group-focus-within:text-black dark:group-focus-within:text-white transition-colors" />
                             <input 
                                 type="text" 
                                 defaultValue={filters.search}
                                 onChange={handleSearch}
-                                placeholder="Filter clients..." 
-                                className="w-full bg-gray-50 border-none rounded-2xl pl-12 pr-6 py-4 text-sm font-bold placeholder-gray-300 focus:ring-[12px] focus:ring-black/5 transition-all"
+                                placeholder={t('admin.users.search_placeholder')} 
+                                className="w-full bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-[1.5rem] pl-14 pr-8 py-4 text-xs font-black text-black dark:text-white placeholder:text-gray-300 dark:placeholder:text-white/10 focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 transition-all focus:outline-none shadow-sm"
                             />
                         </div>
-
-                        <div className="flex items-center gap-2 p-1.5 bg-gray-50 rounded-2xl border border-gray-100">
-                            {['all', 'active', 'blocked'].map((status) => (
-                                <button
-                                    key={status}
-                                    onClick={() => handleStatusFilter(status === 'all' ? '' : status)}
-                                    className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                        (filters.status || 'all') === status 
-                                        ? 'bg-black text-white shadow-lg' 
-                                        : 'text-gray-400 hover:text-black'
-                                    }`}
-                                >
-                                    {status}
-                                </button>
-                            ))}
+                        
+                        <div className="flex items-center gap-4">
+                            <button className="flex items-center gap-2 px-6 py-4 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white transition-all shadow-sm">
+                                <Filter className="w-4 h-4" />
+                                {t('admin.users.filter')}
+                            </button>
                         </div>
-                    </motion.div>
+                    </div>
 
-                    {/* Elite Data Table */}
-                    <motion.div variants={itemVars} className="bg-white rounded-[3rem] border border-gray-200 shadow-2xl shadow-gray-200/50 overflow-hidden">
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="border-b border-gray-100 bg-gray-50/50">
-                                    <th className="px-10 py-6 text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Client Identity</th>
-                                    <th className="px-10 py-6 text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Compliance</th>
-                                    <th className="px-10 py-6 text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Asset Volume</th>
-                                    <th className="px-10 py-6 text-gray-400 font-black text-[10px] uppercase tracking-[0.2em]">Last Access</th>
-                                    <th className="px-10 py-6 text-gray-400 font-black text-[10px] uppercase tracking-[0.2em] text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-50">
-                                {users.data.map((user) => (
-                                    <motion.tr 
-                                        key={user.id} 
-                                        className={`group hover:bg-gray-50/80 transition-colors ${user.isSuspicious ? 'bg-red-50/5' : ''}`}
-                                    >
-                                        <td className="px-10 py-8">
-                                            <div className="flex items-center gap-5">
-                                                <div className="w-14 h-14 rounded-2xl bg-black flex items-center justify-center text-white text-lg font-black italic shadow-xl shadow-black/10">
-                                                    {user.name.charAt(0)}
-                                                </div>
-                                                <div>
-                                                    <div className="flex items-center gap-3">
-                                                        <span className="text-black font-black tracking-tighter text-base">{user.name}</span>
-                                                        {user.isSuspicious && (
-                                                            <span className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-black text-white text-[8px] font-black uppercase tracking-widest animate-pulse">
-                                                                <AlertTriangle className="w-3 h-3" /> Flagged
-                                                            </span>
+                    {/* Users Table */}
+                    <div className="bg-white dark:bg-white/5 backdrop-blur-xl border border-gray-100 dark:border-white/10 rounded-[2.5rem] overflow-hidden shadow-sm transition-colors duration-500">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left border-collapse">
+                                <thead>
+                                    <tr className="bg-gray-50 dark:bg-white/5">
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">Identity</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">Status</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">Financial Base</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest text-right">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+                                    {users.data.map((user) => (
+                                        <tr key={user.id} className="hover:bg-gray-50 dark:hover:bg-white/5 transition-colors group">
+                                            <td className="px-8 py-6">
+                                                <div className="flex items-center gap-4">
+                                                    <div className="w-12 h-12 rounded-2xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black font-black text-xs shadow-sm overflow-hidden border-2 border-gray-50 dark:border-white/10">
+                                                        {user.avatar ? (
+                                                            <img src={`/storage/${user.avatar}`} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            user.name.charAt(0)
                                                         )}
                                                     </div>
-                                                    <p className="text-gray-400 text-[10px] font-black uppercase tracking-widest mt-1">{user.email}</p>
+                                                    <div>
+                                                        <p className="text-black dark:text-white text-sm font-black uppercase tracking-tight">{user.name}</p>
+                                                        <p className="text-gray-400 dark:text-white/20 text-[10px] font-bold tracking-tight">{user.email}</p>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        </td>
-                                        <td className="px-10 py-8">
-                                            <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest ${
-                                                user.status === 'active' 
-                                                ? 'bg-emerald-50 text-emerald-600 border border-emerald-100' 
-                                                : 'bg-black text-white'
-                                            }`}>
-                                                {user.status === 'active' ? <ShieldCheck className="w-3.5 h-3.5" /> : <UserX className="w-3.5 h-3.5" />}
-                                                {user.status}
-                                            </span>
-                                        </td>
-                                        <td className="px-10 py-8">
-                                            <span className="text-black font-black tabular-nums tracking-tighter text-lg">
-                                                {new Intl.NumberFormat('en-MA', { style: 'currency', currency: 'MAD' }).format(user.balance)}
-                                            </span>
-                                        </td>
-                                        <td className="px-10 py-8">
-                                            <div className="text-xs font-black text-gray-400">{user.lastActivity}</div>
-                                            <div className="text-[9px] text-gray-300 mt-1 uppercase tracking-[0.2em] font-black italic">Node Joined {user.createdAt}</div>
-                                        </td>
-                                        <td className="px-10 py-8 text-right">
-                                            <div className="flex items-center justify-end gap-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                <Link 
-                                                    href={`/admin/users/${user.id}`}
-                                                    className="w-10 h-10 bg-white border border-gray-100 hover:border-black text-gray-400 hover:text-black rounded-xl flex items-center justify-center transition-all shadow-sm"
-                                                >
-                                                    <Eye className="w-5 h-5" />
-                                                </Link>
-                                                
-                                                {user.status === 'active' ? (
-                                                    <button 
-                                                        onClick={() => handleAction(user, 'block')}
-                                                        className="w-10 h-10 bg-black text-white rounded-xl flex items-center justify-center hover:scale-110 transition-all shadow-xl shadow-black/20"
-                                                    >
-                                                        <Ban className="w-5 h-5" />
-                                                    </button>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                {user.status === 'blocked' ? (
+                                                    <div className="flex items-center gap-2 text-red-600 dark:text-red-400">
+                                                        <AlertCircle className="w-4 h-4" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('admin.users.status.blocked')}</span>
+                                                    </div>
                                                 ) : (
-                                                    <button 
-                                                        onClick={() => handleAction(user, 'unblock')}
-                                                        className="w-10 h-10 bg-emerald-500 text-white rounded-xl flex items-center justify-center hover:scale-110 transition-all shadow-xl shadow-emerald-500/20"
-                                                    >
-                                                        <CheckCircle className="w-5 h-5" />
-                                                    </button>
+                                                    <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400">
+                                                        <CheckCircle className="w-4 h-4" />
+                                                        <span className="text-[10px] font-black uppercase tracking-widest">{t('admin.users.status.active')}</span>
+                                                    </div>
                                                 )}
-                                            </div>
-                                        </td>
-                                    </motion.tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                            </td>
+                                            <td className="px-8 py-6">
+                                                <p className="text-black dark:text-white text-sm font-black tracking-tighter italic">€ {parseFloat(user.balance || 0).toLocaleString()}</p>
+                                                <p className="text-[9px] text-gray-400 dark:text-white/20 font-black uppercase tracking-widest mt-0.5">Liquid Assets</p>
+                                            </td>
+                                            <td className="px-8 py-6 text-right">
+                                                <div className="flex items-center justify-end gap-2">
+                                                    <Link 
+                                                        href={`/admin/users/${user.id}`}
+                                                        className="w-10 h-10 flex items-center justify-center rounded-xl bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-all"
+                                                        title={t('admin.users.actions.view')}
+                                                    >
+                                                        <Eye className="w-4 h-4" />
+                                                    </Link>
+                                                    
+                                                    {user.status === 'blocked' ? (
+                                                        <button 
+                                                            onClick={() => handleAction(user, 'unblock')}
+                                                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-all"
+                                                            title={t('admin.users.actions.unblock')}
+                                                        >
+                                                            <CheckCircle className="w-4 h-4" />
+                                                        </button>
+                                                    ) : (
+                                                        <button 
+                                                            onClick={() => handleAction(user, 'block')}
+                                                            className="w-10 h-10 flex items-center justify-center rounded-xl bg-red-500/10 text-red-600 dark:text-red-400 hover:bg-red-500/20 transition-all"
+                                                            title={t('admin.users.actions.block')}
+                                                        >
+                                                            <Ban className="w-4 h-4" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
 
                         {/* Pagination */}
-                        <div className="px-10 py-8 bg-gray-50/50 flex items-center justify-between border-t border-gray-100">
-                            <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">
-                                Manifesting <span className="text-black">{users.from}</span> - <span className="text-black">{users.to}</span> of <span className="text-black">{users.total}</span> entities
+                        <div className="px-8 py-6 bg-gray-50 dark:bg-white/5 flex items-center justify-between border-t border-gray-100 dark:border-white/10">
+                            <p className="text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">
+                                {t('admin.common.showing')} <span className="text-black dark:text-white">{users.from}</span> {t('admin.common.to')} <span className="text-black dark:text-white">{users.to}</span> {t('admin.common.of')} <span className="text-black dark:text-white">{users.total}</span> {t('admin.common.entries')}
                             </p>
                             <div className="flex gap-2">
-                                {users.links.map((link, i) => (
-                                    <Link
-                                        key={i}
-                                        href={link.url || '#'}
-                                        dangerouslySetInnerHTML={{ __html: link.label }}
-                                        className={`px-5 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-                                            link.active 
-                                            ? 'bg-black text-white shadow-xl' 
-                                            : link.url 
-                                                ? 'text-gray-400 hover:text-black hover:bg-white border border-transparent hover:border-gray-100' 
-                                                : 'text-gray-200 cursor-not-allowed'
-                                        }`}
-                                    />
-                                ))}
+                                <button 
+                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white border border-gray-100 dark:border-white/10 transition-all shadow-sm disabled:opacity-30"
+                                    disabled={!users.prev_page_url}
+                                    onClick={() => router.get(users.prev_page_url)}
+                                >
+                                    <ChevronLeft className="w-4 h-4" />
+                                </button>
+                                <button 
+                                    className="w-10 h-10 flex items-center justify-center rounded-xl bg-white dark:bg-white/5 text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white border border-gray-100 dark:border-white/10 transition-all shadow-sm disabled:opacity-30"
+                                    disabled={!users.next_page_url}
+                                    onClick={() => router.get(users.next_page_url)}
+                                >
+                                    <ChevronRight className="w-4 h-4" />
+                                </button>
                             </div>
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </div>
+                </div>
             </main>
 
             {/* Action Modal */}
-            <Modal
-                isOpen={isBlockModalOpen}
-                onClose={() => setIsBlockModalOpen(false)}
-                title={actionType === 'block' ? 'Terminate Access' : 'Reactivate Entity'}
-            >
-                <form onSubmit={submitAction} className="space-y-8">
-                    {actionType === 'block' && (
-                        <div className="bg-black text-white p-6 rounded-[2rem] flex items-start gap-5 shadow-2xl">
-                            <AlertCircle className="text-white w-6 h-6 shrink-0 mt-1" />
-                            <div>
-                                <h4 className="text-sm font-black uppercase tracking-widest italic mb-2">Protocol Warning</h4>
-                                <p className="text-white/50 text-[10px] leading-relaxed font-medium uppercase tracking-widest">
-                                    Entity sessions will be terminated. All assets will be frozen until manual review.
-                                </p>
-                            </div>
+            <Modal show={isBlockModalOpen} onClose={() => setIsBlockModalOpen(false)} maxWidth="md">
+                <div className="p-10 dark:bg-[#0a0a0a] transition-colors duration-500">
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${actionType === 'block' ? 'bg-red-500/10 text-red-600' : 'bg-emerald-500/10 text-emerald-600'}`}>
+                            <AlertTriangle className="w-7 h-7" />
                         </div>
-                    )}
-
-                    <div>
-                        <label className="block text-[10px] font-black text-gray-400 uppercase tracking-[0.3em] mb-4 px-1">Justification</label>
-                        <textarea
-                            value={data.reason}
-                            onChange={e => setData('reason', e.target.value)}
-                            className="w-full bg-gray-50 border-gray-100 rounded-2xl p-6 text-black font-bold placeholder:text-gray-300 focus:ring-[12px] focus:ring-black/5 focus:border-black transition-all min-h-[140px] focus:outline-none"
-                            placeholder="Specify violation details..."
-                        />
-                        {errors.reason && <p className="text-black text-[10px] font-black uppercase tracking-widest mt-2">{errors.reason}</p>}
+                        <div>
+                            <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase italic">
+                                {actionType === 'block' ? t('admin.users.modal.block_title') : t('admin.users.modal.unblock_title')}
+                            </h2>
+                            <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mt-1">Target Entity: {selectedUser?.name}</p>
+                        </div>
                     </div>
 
-                    <div className="flex gap-4 pt-4">
-                        <button
-                            type="button"
-                            onClick={() => setIsBlockModalOpen(false)}
-                            className="flex-1 py-5 bg-gray-100 text-black rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-gray-200 transition-all"
-                        >
-                            Abort
-                        </button>
-                        <button
-                            type="submit"
-                            disabled={processing}
-                            className={`flex-1 py-5 rounded-2xl font-black text-[10px] uppercase tracking-widest text-white shadow-xl transition-all ${
-                                actionType === 'block' 
-                                ? 'bg-black hover:bg-gray-800 shadow-black/20' 
-                                : 'bg-emerald-600 hover:bg-emerald-500 shadow-emerald-500/20'
-                            }`}
-                        >
-                            {processing ? 'Processing...' : `Confirm ${actionType === 'block' ? 'Termination' : 'Reactivation'}`}
-                        </button>
-                    </div>
-                </form>
+                    <form onSubmit={submitAction} className="space-y-8">
+                        <div>
+                            <label className="block text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest mb-3">{t('admin.users.modal.reason_label')}</label>
+                            <textarea
+                                value={data.reason}
+                                onChange={e => setData('reason', e.target.value)}
+                                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-5 text-sm font-bold text-black dark:text-white focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 transition-all focus:outline-none min-h-[120px]"
+                                placeholder="State institutional reason..."
+                                required
+                            />
+                            {errors.reason && <p className="mt-2 text-xs text-red-600 font-bold">{errors.reason}</p>}
+                        </div>
+
+                        <div className="flex items-center justify-end gap-4 pt-4">
+                            <button
+                                type="button"
+                                onClick={() => setIsBlockModalOpen(false)}
+                                className="px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white transition-colors"
+                            >
+                                {t('admin.users.modal.cancel')}
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className={`px-8 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-white transition-all shadow-lg ${
+                                    actionType === 'block' 
+                                    ? 'bg-red-600 hover:bg-red-700 shadow-red-500/20' 
+                                    : 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20'
+                                }`}
+                            >
+                                {actionType === 'block' ? t('admin.users.modal.confirm_block') : t('admin.users.modal.confirm_unblock')}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </Modal>
         </div>
     );

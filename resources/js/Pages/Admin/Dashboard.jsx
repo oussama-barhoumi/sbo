@@ -59,11 +59,11 @@ const Dashboard = ({ stats, chartData }) => {
                     <motion.div variants={itemVars} className="flex items-center justify-between">
                         <div>
                             <h2 className="text-4xl font-black text-black dark:text-white tracking-tighter uppercase italic">{t('admin.page.oversight.title')}</h2>
-                            <p className="text-gray-400 dark:text-white/20 text-xs font-black uppercase tracking-[0.3em] mt-2">Real-time infrastructure health & compliance</p>
+                            <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-[0.3em] mt-2">Real-time infrastructure health & compliance</p>
                         </div>
                         <div className="flex items-center gap-4">
                             <div className="px-6 py-3 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl shadow-sm">
-                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white/20 block mb-1">Network Status</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 dark:text-white/20 block mb-1">{t('admin.dashboard.health.network')}</span>
                                 <div className="flex items-center gap-2">
                                     <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
                                     <span className="text-xs font-bold text-black dark:text-white">{t('admin.dashboard.health.operational')}</span>

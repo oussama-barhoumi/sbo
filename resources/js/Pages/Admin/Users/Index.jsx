@@ -91,10 +91,10 @@ const UsersIndex = ({ users, filters }) => {
                             <table className="w-full text-left border-collapse">
                                 <thead>
                                     <tr className="bg-gray-50 dark:bg-white/5">
-                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">Identity</th>
-                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">Status</th>
-                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">Financial Base</th>
-                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest text-right">Actions</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">{t('admin.users.table.identity')}</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">{t('admin.users.table.status')}</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest">{t('admin.users.table.balance')}</th>
+                                        <th className="px-8 py-5 text-gray-400 dark:text-white/20 font-black text-[10px] uppercase tracking-widest text-right">{t('admin.users.table.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100 dark:divide-white/5">
@@ -130,7 +130,7 @@ const UsersIndex = ({ users, filters }) => {
                                             </td>
                                             <td className="px-8 py-6">
                                                 <p className="text-black dark:text-white text-sm font-black tracking-tighter italic">€ {parseFloat(user.balance || 0).toLocaleString()}</p>
-                                                <p className="text-[9px] text-gray-400 dark:text-white/20 font-black uppercase tracking-widest mt-0.5">Liquid Assets</p>
+                                                <p className="text-[9px] text-gray-400 dark:text-white/20 font-black uppercase tracking-widest mt-0.5">{t('admin.users.table.assets')}</p>
                                             </td>
                                             <td className="px-8 py-6 text-right">
                                                 <div className="flex items-center justify-end gap-2">
@@ -204,7 +204,7 @@ const UsersIndex = ({ users, filters }) => {
                             <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase italic">
                                 {actionType === 'block' ? t('admin.users.modal.block_title') : t('admin.users.modal.unblock_title')}
                             </h2>
-                            <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mt-1">Target Entity: {selectedUser?.name}</p>
+                            <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mt-1">{t('admin.users.modal.target')}: {selectedUser?.name}</p>
                         </div>
                     </div>
 
@@ -215,7 +215,7 @@ const UsersIndex = ({ users, filters }) => {
                                 value={data.reason}
                                 onChange={e => setData('reason', e.target.value)}
                                 className="w-full bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-2xl p-5 text-sm font-bold text-black dark:text-white focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 transition-all focus:outline-none min-h-[120px]"
-                                placeholder="State institutional reason..."
+                                placeholder={t('admin.users.modal.reason_placeholder')}
                                 required
                             />
                             {errors.reason && <p className="mt-2 text-xs text-red-600 font-bold">{errors.reason}</p>}

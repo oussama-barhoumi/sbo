@@ -140,7 +140,6 @@ const UserShow = ({ user }) => {
                                     <Activity className="text-black dark:text-white w-6 h-6" /> {t('admin.users.show.ledger_history')}
                                 </h3>
                                 <div className="space-y-4">
-                                    {user.accounts.flatMap(acc => acc.ledger_entries).sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 10).map((entry) => (
                                         <div key={entry.id} className="flex items-center justify-between p-6 rounded-[1.5rem] bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 hover:border-black/10 dark:hover:border-white/20 transition-all group">
                                             <div className="flex items-center gap-5">
                                                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center shadow-sm ${
@@ -149,7 +148,7 @@ const UserShow = ({ user }) => {
                                                     {entry.type === 'credit' ? <ArrowDownLeft className="w-6 h-6" /> : <ArrowUpRight className="w-6 h-6" />}
                                                 </div>
                                                 <div>
-                                                    <p className="text-black dark:text-white font-black text-sm uppercase tracking-tight">{entry.description || 'Institutional Transfer'}</p>
+                                                    <p className="text-black dark:text-white font-black text-sm uppercase tracking-tight">{entry.description || t('admin.users.show.ledger_history')}</p>
                                                     <div className="flex items-center gap-2 mt-1">
                                                         <Clock className="w-3 h-3 text-gray-300 dark:text-white/10" />
                                                         <p className="text-gray-400 dark:text-white/20 text-[10px] font-bold uppercase tracking-widest">{new Date(entry.created_at).toLocaleString()}</p>

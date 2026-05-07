@@ -41,7 +41,7 @@ const API = (path, opts = {}) => {
     }).then(r => r.json());
 };
 
-const fmt = (n, cur = 'EUR') => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: cur }).format(n);
+const fmt = (n, cur = 'EUR', locale = 'en-US') => new Intl.NumberFormat(locale, { style: 'currency', currency: cur }).format(n);
 
 // ── Components ───────────────────────────────────────────────────────────────
 function WordReveal({ text, className }) {
@@ -151,12 +151,12 @@ function DepositModal({ open, onClose, userId, onSuccess }) {
 
     const submit = async (e) => {
         e.preventDefault();
-        if (!form.amount || +form.amount <= 0) { setErr({ amount: t('validation.required') }); return; }
+        if (!form.amount || +form.amount <= 0) { setErr({ amount: t('dashboard.common.required') }); return; }
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/deposit', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`${t('dashboard.modals.deposit.confirm')}: ${fmt(res.newBalance)}`); onSuccess(); }
-        else setMsg(res.message || 'Error');
+        if (res.success) { setOk(true); setMsg(`${t('dashboard.common.complete')}: ${fmt(res.newBalance, profile?.account?.currency, t('locale'))}`); onSuccess(); }
+        else setMsg(res.message || t('dashboard.common.error'));
     };
 
     return (
@@ -168,13 +168,13 @@ function DepositModal({ open, onClose, userId, onSuccess }) {
                 </Field>
                 <Field label={t('dashboard.modals.deposit.method')}>
                     <select value={form.method} onChange={e => setForm({...form, method: e.target.value})} className={inputCls()}>
-                        <option value="card">Credit / Debit Card</option>
-                        <option value="transfer">Bank Wire</option>
-                        <option value="crypto">Crypto Assets</option>
+                        <option value="card">{t('dashboard.modals.deposit.method_card')}</option>
+                        <option value="transfer">{t('dashboard.modals.deposit.method_wire')}</option>
+                        <option value="crypto">{t('dashboard.modals.deposit.method_crypto')}</option>
                     </select>
                 </Field>
                 <button disabled={loading} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
-                    {loading ? 'Processing...' : t('dashboard.modals.deposit.confirm')}
+                    {loading ? t('dashboard.common.processing') : t('dashboard.modals.deposit.confirm')}
                 </button>
             </form>
         </ModalWrapper>
@@ -192,15 +192,15 @@ function TransferModal({ open, onClose, userId, onSuccess }) {
     const submit = async (e) => {
         e.preventDefault();
         let eObj = {};
-        if (!form.amount || +form.amount <= 0) eObj.amount = 'Required';
-        if (!form.recipientId) eObj.recipientId = 'Required';
+        if (!form.amount || +form.amount <= 0) eObj.amount = t('dashboard.common.required');
+        if (!form.recipientId) eObj.recipientId = t('dashboard.common.required');
         if (Object.keys(eObj).length) { setErr(eObj); return; }
 
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/transfer', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`Transfer Complete: ${fmt(res.newBalance)}`); onSuccess(); }
-        else setMsg(res.message || 'Error');
+        if (res.success) { setOk(true); setMsg(`${t('dashboard.common.complete')}: ${fmt(res.newBalance, profile?.account?.currency, t('locale'))}`); onSuccess(); }
+        else setMsg(res.message || t('dashboard.common.error'));
     };
 
     return (
@@ -214,7 +214,7 @@ function TransferModal({ open, onClose, userId, onSuccess }) {
                     <input type="number" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className={inputCls(err.amount)} placeholder="0.00" />
                 </Field>
                 <button disabled={loading} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
-                    {loading ? 'Processing...' : t('dashboard.modals.transfer.confirm')}
+                    {loading ? t('dashboard.common.processing') : t('dashboard.modals.transfer.confirm')}
                 </button>
             </form>
         </ModalWrapper>

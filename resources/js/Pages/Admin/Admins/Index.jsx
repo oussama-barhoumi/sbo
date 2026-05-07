@@ -106,7 +106,7 @@ const AdminsIndex = ({ admins }) => {
                                     <button 
                                         onClick={() => handleRemoveAdmin(admin.id)}
                                         className="p-3.5 bg-red-500/10 hover:bg-red-600 text-red-600 hover:text-white rounded-xl transition-all shadow-sm group/btn"
-                                        title="Revoke Access"
+                                        title={t('admin.admins.actions.revoke')}
                                     >
                                         <Trash2 className="w-5 h-5 group-hover/btn:scale-110 transition-transform" />
                                     </button>
@@ -130,7 +130,7 @@ const AdminsIndex = ({ admins }) => {
                         </div>
                         <div>
                             <h2 className="text-2xl font-black text-black dark:text-white tracking-tighter uppercase italic">{t('admin.admins.modal.title')}</h2>
-                            <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mt-1">Elevate user privileges</p>
+                            <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-widest mt-1">{t('admin.admins.modal.subtitle')}</p>
                         </div>
                     </div>
 
@@ -191,7 +191,7 @@ const AdminsIndex = ({ admins }) => {
                                 disabled={processing}
                                 className="flex-1 py-5 bg-black dark:bg-white text-white dark:text-black rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-2xl shadow-black/20 dark:shadow-none transition-all disabled:opacity-50"
                             >
-                                {processing ? 'Processing...' : t('admin.admins.modal.submit')}
+                                {processing ? t('dashboard.common.processing') : t('admin.admins.grant_access')}
                             </button>
                         </div>
                     </form>

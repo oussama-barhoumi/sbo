@@ -18,7 +18,7 @@ Route::post('/locale/{locale}', function (string $locale) {
     }
     return back();
 })->name('locale.switch');
-Route::get('/banking', fn() => Inertia::render('BankingDashboard'))->name('banking');
+Route::get('/banking', fn() => Inertia::render('BankingDashboard'))->middleware(['auth'])->name('banking');
 
 // Bank Account Registration
 Route::get('/register-account', [RegisterAccountController::class, 'create'])->name('register.account');

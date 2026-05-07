@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { motion, useSpring } from 'framer-motion';
+import { useApp } from '@/hooks/useApp';
 
 export default function CustomCursor() {
+    const { isDark } = useApp();
     const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
     const [isHovering, setIsHovering] = useState(false);
 
@@ -41,8 +43,8 @@ export default function CustomCursor() {
                 width: cursorSize,
                 height: cursorSize,
                 borderRadius: '50%',
-                backgroundColor: isHovering ? 'rgba(0,0,0,0.05)' : 'black',
-                border: isHovering ? '1px solid rgba(0,0,0,0.1)' : 'none',
+                backgroundColor: isHovering ? (isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.05)') : (isDark ? 'white' : 'black'),
+                border: isHovering ? (isDark ? '1px solid rgba(255,255,255,0.2)' : '1px solid rgba(0,0,0,0.1)') : 'none',
                 mixBlendMode: isHovering ? 'difference' : 'normal',
                 transition: 'width 0.3s, height 0.3s, background-color 0.3s'
             }}

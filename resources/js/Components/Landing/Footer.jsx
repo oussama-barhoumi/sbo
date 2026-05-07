@@ -1,8 +1,19 @@
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { useApp } from '@/hooks/useApp';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 export default function Footer() {
+    const { isDark } = useApp();
+    const { t } = useLaravelReactI18n();
+
+    const navLinks = [
+        { label: t('footer.about'), href: '#' },
+        { label: t('footer.products'), href: '#' },
+        { label: t('footer.security'), href: '#' },
+        { label: t('footer.terms'), href: '#' },
+    ];
+
     return (
-        <footer id="footer" className="bg-black text-white py-12 relative overflow-hidden border-t border-white/5">
+        <footer id="footer" className={`py-12 relative overflow-hidden border-t border-white/5 transition-colors duration-500 ${isDark ? 'bg-black text-white' : 'bg-black text-white'}`}>
             <div className="max-w-7xl mx-auto px-5 sm:px-8 relative z-10">
                 <div className="flex flex-col md:flex-row items-center justify-between gap-8">
                     {/* Brand */}
@@ -15,12 +26,13 @@ export default function Footer() {
                         <span className="text-xl font-black tracking-tight">HarborBank</span>
                     </a>
 
-                    {/* Compact Links */}
+                    {/* Nav Links */}
                     <div className="flex flex-wrap items-center justify-center gap-8 text-xs font-bold uppercase tracking-widest text-gray-400">
-                        <a href="#" className="hover:text-white transition-colors">About</a>
-                        <a href="#" className="hover:text-white transition-colors">Products</a>
-                        <a href="#" className="hover:text-white transition-colors">Security</a>
-                        <a href="#" className="hover:text-white transition-colors">Terms</a>
+                        {navLinks.map((link) => (
+                            <a key={link.label} href={link.href} className="hover:text-white transition-colors">
+                                {link.label}
+                            </a>
+                        ))}
                     </div>
 
                     {/* Socials */}
@@ -40,10 +52,10 @@ export default function Footer() {
                 </div>
 
                 <div className="mt-8 pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] text-gray-500 font-bold uppercase tracking-widest">
-                    <span>© 2026 HarborBank. All Rights Reserved.</span>
+                    <span>© 2026 HarborBank. {t('footer.rights')}</span>
                     <div className="flex gap-6">
-                        <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
-                        <a href="#" className="hover:text-white transition-colors">Cookie Settings</a>
+                        <a href="#" className="hover:text-white transition-colors">{t('footer.privacy')}</a>
+                        <a href="#" className="hover:text-white transition-colors">{t('footer.cookies')}</a>
                     </div>
                 </div>
             </div>

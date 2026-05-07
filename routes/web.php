@@ -10,6 +10,14 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', fn() => Inertia::render('Welcome'));
+
+// Language switcher
+Route::post('/locale/{locale}', function (string $locale) {
+    if (in_array($locale, ['en', 'fr', 'ar'])) {
+        session(['locale' => $locale]);
+    }
+    return back();
+})->name('locale.switch');
 Route::get('/banking', fn() => Inertia::render('BankingDashboard'))->name('banking');
 
 // Bank Account Registration

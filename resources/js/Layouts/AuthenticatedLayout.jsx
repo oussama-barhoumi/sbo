@@ -57,7 +57,7 @@ export default function AuthenticatedLayout({ header, children }) {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#050505] text-black dark:text-white font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black pb-24 lg:pb-0 transition-colors duration-500">
             {/* Premium Nav */}
-            <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-white/80 dark:bg-black/80 backdrop-blur-2xl py-4 shadow-sm' : 'bg-white dark:bg-black py-6'}`}>
+            <nav className={`fixed top-0 left-0 right-0 z-50 border-b transition-all duration-500 ${scrolled ? 'bg-white/90 dark:bg-[#050505]/90 backdrop-blur-2xl py-4 shadow-sm border-gray-100 dark:border-white/5' : 'bg-white dark:bg-[#050505] py-6 border-transparent'}`}>
                 <div className="max-w-[1600px] mx-auto px-6 sm:px-10 flex items-center justify-between">
                     <div className="flex items-center gap-12">
                         <Link href="/" className="flex items-center gap-3 group">

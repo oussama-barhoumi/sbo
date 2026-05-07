@@ -5,22 +5,28 @@ import Services from '@/Components/Landing/Services';
 import Trust from '@/Components/Landing/Trust';
 import Promotions from '@/Components/Landing/Promotions';
 import Footer from '@/Components/Landing/Footer';
+import { AppProvider } from '@/hooks/useApp';
+import { useLaravelReactI18n } from 'laravel-react-i18n';
 
 export default function Welcome() {
-    return (
-        <div className="selection:bg-black selection:text-white">
-            <Head title="Modern Digital Banking">
-                <meta name="description" content="HarborBank — Banking that moves with you. Zero-fee checking, high-yield savings, and seamless transfers." />
-            </Head>
+    const { t } = useLaravelReactI18n();
 
-            <Navbar />
-            <main>
-                <Hero />
-                <Services />
-                <Trust />
-                <Promotions />
-            </main>
-            <Footer />
-        </div>
+    return (
+        <AppProvider>
+            <div className="selection:bg-black selection:text-white transition-colors duration-500">
+                <Head title={t('welcome.title')}>
+                    <meta name="description" content={t('welcome.description')} />
+                </Head>
+
+                <Navbar />
+                <main>
+                    <Hero />
+                    <Services />
+                    <Trust />
+                    <Promotions />
+                </main>
+                <Footer />
+            </div>
+        </AppProvider>
     );
 }

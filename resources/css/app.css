@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -28,19 +30,19 @@
 @layer base {
     html {
         scroll-behavior: smooth;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
     }
     body {
-        @apply bg-[#fcfdfe] text-brand-950 antialiased transition-colors duration-500;
+        @apply bg-harbor-50 text-harbor-950 font-sans;
     }
-    .dark body {
-        @apply bg-[#050505] text-white;
+    ::selection {
+        @apply bg-harbor-950 text-white;
     }
 }
 
 @layer components {
-    .glass-card {
-        @apply bg-white/70 backdrop-blur-md border border-white/40 shadow-glass transition-all duration-300;
-    }
+    /* ── Buttons ── */
     .btn-primary {
         @apply inline-flex items-center justify-center px-8 py-4 bg-brand-600 text-white font-bold text-sm rounded-full
                transition-all duration-300 ease-in-out
@@ -53,18 +55,117 @@
                hover:bg-white/80 hover:shadow-glass hover:-translate-y-1
                active:translate-y-0 active:scale-95;
     }
-    .mesh-gradient {
-        background-color: #ffffff;
-        background-image: 
-            radial-gradient(at 0% 0%, hsla(0,0%,95%,1) 0, transparent 50%), 
-            radial-gradient(at 50% 0%, hsla(0,0%,90%,1) 0, transparent 50%), 
-            radial-gradient(at 100% 0%, hsla(0,0%,85%,1) 0, transparent 50%);
+    .btn-glass {
+        @apply inline-flex items-center justify-center px-7 py-3.5 font-semibold text-sm rounded-full
+               bg-white/10 text-white border border-white/20 backdrop-blur-glass
+               transition-all duration-300 ease-out
+               hover:bg-white/20 hover:border-white/30 hover:shadow-glass-hover hover:-translate-y-0.5
+               active:translate-y-0;
+    }
+
+    /* ── Cards ── */
+    .card {
+        @apply bg-white rounded-2xl p-6 shadow-card
+               transition-all duration-300 ease-out
+               hover:shadow-card-hover hover:-translate-y-1;
+    }
+    .glass-card {
+        @apply rounded-2xl p-6 backdrop-blur-glass border shadow-glass
+               bg-white/[0.07] border-white/[0.12]
+               transition-all duration-300 ease-out
+               hover:bg-white/[0.1] hover:border-white/[0.18] hover:shadow-glass-hover;
+    }
+    .glass-card-light {
+        @apply rounded-2xl p-6 backdrop-blur-glass border shadow-glass
+               bg-white/60 border-white/80
+               transition-all duration-300 ease-out
+               hover:bg-white/70 hover:shadow-glass-hover;
+    }
+
+    /* ── Glass Navigation ── */
+    .glass-nav {
+        @apply backdrop-blur-heavy bg-white/[0.06] border-b border-white/[0.08]
+               transition-all duration-500 ease-out;
+    }
+    .glass-nav-scrolled {
+        @apply backdrop-blur-heavy bg-white/[0.12] border-b border-white/[0.15] shadow-glass;
+    }
+
+    /* ── Gradient Text ── */
+    .text-gradient-blue {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-blue to-accent-cyan;
+    }
+    .text-gradient-emerald {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-emerald to-accent-cyan;
+    }
+    .text-gradient-violet {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-violet to-accent-blue;
+    }
+    .text-gradient-amber {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-accent-amber to-accent-rose;
+    }
+
+    /* ── Glow Border ── */
+    .glow-border {
+        @apply relative;
+    }
+    .glow-border::before {
+        content: '';
+        @apply absolute inset-0 rounded-2xl opacity-0 transition-opacity duration-500;
+        background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(139,92,246,0.2), rgba(6,182,212,0.2));
+        filter: blur(20px);
+        z-index: -1;
+    }
+    .glow-border:hover::before {
+        @apply opacity-100;
+    }
+
+    /* ── Shimmer Loading ── */
+    .shimmer {
+        @apply relative overflow-hidden;
+        background: linear-gradient(90deg, transparent 33%, rgba(255,255,255,0.3) 50%, transparent 67%);
+        background-size: 200% 100%;
+        animation: shimmer 2s linear infinite;
+    }
+
+    /* ── Input Styles ── */
+    .input-glass {
+        @apply w-full px-5 py-4 bg-white/[0.06] border-2 border-white/[0.12] rounded-2xl
+               text-white text-base font-medium placeholder-white/30
+               focus:outline-none focus:bg-white/[0.1] focus:border-white/[0.25]
+               transition-all duration-300;
+    }
+    .input-light {
+        @apply w-full px-5 py-4 bg-harbor-50 border-2 border-harbor-200 rounded-2xl
+               text-harbor-950 text-base font-medium placeholder-harbor-300
+               focus:outline-none focus:bg-white focus:border-harbor-950
+               transition-all duration-300;
     }
 }
 
-/* KYC camera scan-line animation */
+/* ── KYC camera scan-line animation ── */
 @keyframes kyc-scan {
     0%   { top: 15%;  opacity: 0.8; }
     50%  { top: 85%;  opacity: 1;   }
     100% { top: 15%;  opacity: 0.8; }
+}
+
+/* ── Shrink animation for login redirect bar ── */
+@keyframes shrink {
+    from { width: 100%; }
+    to   { width: 0%; }
+}
+
+/* ── Scrollbar Styling ── */
+::-webkit-scrollbar {
+    width: 6px;
+}
+::-webkit-scrollbar-track {
+    @apply bg-transparent;
+}
+::-webkit-scrollbar-thumb {
+    @apply bg-harbor-300 rounded-full;
+}
+::-webkit-scrollbar-thumb:hover {
+    @apply bg-harbor-400;
 }

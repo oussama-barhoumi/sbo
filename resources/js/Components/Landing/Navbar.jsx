@@ -1,122 +1,168 @@
+import { Link, usePage } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
-import { Link } from '@inertiajs/react';
-import Magnetic from './Animations/Magnetic';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
+    const { url } = usePage();
 
     useEffect(() => {
-        const handleScroll = () => setScrolled(window.scrollY > 20);
-        window.addEventListener('scroll', handleScroll, { passive: true });
-        return () => window.removeEventListener('scroll', handleScroll);
+        const onScroll = () => setScrolled(window.scrollY > 20);
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
     }, []);
 
-    const navLinks = [
-        { label: 'Products', href: '#services' },
-        { label: 'Investment', href: '#services' },
-        { label: 'Security', href: '#trust' },
-        { label: 'News', href: '#promotions' },
+    // Close mobile menu on route change
+    useEffect(() => { setMobileOpen(false); }, [url]);
+
+    const links = [
+        { href: '/', label: 'Home' },
+        { href: '/register-account', label: 'Open Account' },
+        { href: '/login', label: 'Sign In' },
     ];
 
     return (
-        <nav
-            id="navbar"
-            className={`fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[95%] max-w-7xl transition-all duration-500 ease-in-out px-4 py-2 ${
+        <motion.nav
+            initial={{ y: -20, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, ease: [0.25, 0.46, 0.45, 0.94] }}
+            className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
                 scrolled
-                    ? 'bg-white/70 backdrop-blur-xl border border-gray-200 shadow-glass rounded-3xl'
-                    : 'bg-transparent rounded-none'
+                    ? 'backdrop-blur-heavy bg-harbor-950/80 border-b border-white/[0.08] shadow-glass'
+                    : 'bg-transparent'
             }`}
         >
-            <div className="mx-auto flex items-center justify-between">
-                {/* Logo */}
-                <a href="/" className="flex items-center gap-3 group px-2 py-1">
-                    <div className="w-10 h-10 bg-black rounded-2xl flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                        <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 2a3 3 0 00-3 3c0 1.66 1.34 3 3 3s3-1.34 3-3a3 3 0 00-3-3zm0 8v12m0 0c-4-1-7-4-7-8h3m4 8c4-1 7-4 7-8h-3" />
-                        </svg>
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="flex items-center justify-between h-16 lg:h-20">
+
+                    {/* Logo */}
+                    <Link href="/" className="flex items-center gap-2.5 group">
+                        <div className="w-9 h-9 bg-white/10 rounded-xl flex items-center justify-center border border-white/20 transition-all duration-300 group-hover:bg-white/15 group-hover:border-white/30 group-hover:shadow-glow-blue">
+                            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
+                            </svg>
+                        </div>
+                        <span className="font-bold text-lg text-white tracking-tight">HarborBank</span>
+                    </Link>
+
+                    {/* Desktop Nav */}
+                    <div className="hidden lg:flex items-center gap-1">
+                        {links.map((link) => {
+                            const isActive = url === link.href || (link.href !== '/' && url.startsWith(link.href));
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={link.href}
+                                    className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
+                                        isActive
+                                            ? 'text-white'
+                                            : 'text-white/50 hover:text-white/80'
+                                    }`}
+                                >
+                                    {link.label}
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="navbar-indicator"
+                                            className="absolute bottom-0 left-2 right-2 h-0.5 bg-gradient-to-r from-accent-blue to-accent-cyan rounded-full"
+                                            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                                        />
+                                    )}
+                                </Link>
+                            );
+                        })}
                     </div>
-                    <span className="text-xl font-black text-black tracking-tight">
-                        HarborBank
-                    </span>
-                </a>
 
-                {/* Desktop Nav */}
-                <div className="hidden lg:flex items-center bg-gray-100/50 rounded-2xl p-1 border border-gray-200/20">
-                    {navLinks.map((link) => (
-                        <a
-                            key={link.label}
-                            href={link.href}
-                            className="px-5 py-2 text-sm font-bold text-gray-600 rounded-xl transition-all duration-300 hover:text-black hover:bg-white"
-                        >
-                            {link.label}
-                        </a>
-                    ))}
-                </div>
-
-                {/* Right Actions */}
-                <div className="flex items-center gap-2">
-                    <Magnetic>
+                    {/* Desktop CTA */}
+                    <div className="hidden lg:flex items-center gap-3">
                         <Link
                             href="/login"
-                            className="hidden sm:inline-flex px-6 py-2.5 text-sm font-bold text-black hover:text-gray-700 transition-colors"
+                            className="px-5 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
                         >
-                            Log In
+                            Sign In
                         </Link>
-                    </Magnetic>
-                    <Magnetic>
                         <Link
                             href="/register-account"
-                            className="btn-primary !py-2.5 !px-7 !text-xs !rounded-2xl !bg-black"
+                            className="px-5 py-2.5 text-sm font-semibold rounded-xl
+                                       bg-gradient-to-r from-accent-blue to-accent-cyan text-white
+                                       hover:shadow-glow-blue transition-all duration-300 hover:-translate-y-0.5"
                         >
-                            Sign Up
+                            Open Account
                         </Link>
-                    </Magnetic>
+                    </div>
 
-                    {/* Burger */}
+                    {/* Mobile burger */}
                     <button
-                        id="mobile-menu-toggle"
                         onClick={() => setMobileOpen(!mobileOpen)}
-                        className="lg:hidden w-10 h-10 flex items-center justify-center rounded-xl bg-gray-100/50 hover:bg-white transition-colors"
-                        aria-label="Toggle menu"
+                        className="lg:hidden w-10 h-10 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                        aria-label="Toggle navigation"
                     >
-                        <div className="w-5 flex flex-col gap-1.5">
-                            <span className={`block h-0.5 bg-black rounded-full transition-all duration-300 ${mobileOpen ? 'rotate-45 translate-y-2' : ''}`} />
-                            <span className={`block h-0.5 bg-black rounded-full transition-all duration-300 ${mobileOpen ? 'opacity-0' : ''}`} />
-                            <span className={`block h-0.5 bg-black rounded-full transition-all duration-300 ${mobileOpen ? '-rotate-45 -translate-y-2' : ''}`} />
+                        <div className="w-5 h-4 relative flex flex-col justify-between">
+                            <motion.span
+                                animate={mobileOpen ? { rotate: 45, y: 7 } : { rotate: 0, y: 0 }}
+                                className="block w-full h-0.5 bg-current rounded-full origin-center"
+                            />
+                            <motion.span
+                                animate={mobileOpen ? { opacity: 0, x: -10 } : { opacity: 1, x: 0 }}
+                                className="block w-full h-0.5 bg-current rounded-full"
+                            />
+                            <motion.span
+                                animate={mobileOpen ? { rotate: -45, y: -7 } : { rotate: 0, y: 0 }}
+                                className="block w-full h-0.5 bg-current rounded-full origin-center"
+                            />
                         </div>
                     </button>
                 </div>
             </div>
 
-            {/* Mobile Menu Overlay */}
-            <div
-                className={`lg:hidden fixed inset-0 top-0 left-0 right-0 h-screen bg-white z-40 transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
-                    mobileOpen
-                        ? 'opacity-100 translate-y-0'
-                        : 'opacity-0 -translate-y-full pointer-events-none'
-                }`}
-            >
-                <div className="flex flex-col h-full pt-28 px-10">
-                    <div className="flex flex-col gap-1">
-                        {navLinks.map((link, i) => (
-                            <a
-                                key={link.label}
-                                href={link.href}
-                                onClick={() => setMobileOpen(false)}
-                                className="px-6 py-6 text-3xl font-black text-black rounded-3xl transition-all hover:bg-gray-50 hover:translate-x-2"
-                                style={{ transitionDelay: `${i * 50}ms` }}
+            {/* Mobile Menu */}
+            <AnimatePresence>
+                {mobileOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="lg:hidden overflow-hidden backdrop-blur-heavy bg-harbor-950/95 border-t border-white/[0.06]"
+                    >
+                        <div className="px-6 py-4 space-y-1">
+                            {links.map((link, i) => (
+                                <motion.div
+                                    key={link.href}
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: i * 0.08 }}
+                                >
+                                    <Link
+                                        href={link.href}
+                                        className={`block px-4 py-3 rounded-xl text-sm font-medium transition-all ${
+                                            url === link.href
+                                                ? 'text-white bg-white/10'
+                                                : 'text-white/50 hover:text-white hover:bg-white/5'
+                                        }`}
+                                    >
+                                        {link.label}
+                                    </Link>
+                                </motion.div>
+                            ))}
+                            <motion.div
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ delay: links.length * 0.08 }}
+                                className="pt-3"
                             >
-                                {link.label}
-                            </a>
-                        ))}
-                    </div>
-                    <div className="mt-auto pb-12 flex flex-col gap-4">
-                        <Link href="/register-account" className="btn-primary w-full py-5 text-lg !bg-black">Create Free Account</Link>
-                        <Link href="/login" className="btn-secondary w-full py-5 text-lg">Login to Portal</Link>
-                    </div>
-                </div>
-            </div>
-        </nav>
+                                <Link
+                                    href="/register-account"
+                                    className="block w-full text-center px-5 py-3 text-sm font-semibold rounded-xl
+                                               bg-gradient-to-r from-accent-blue to-accent-cyan text-white"
+                                >
+                                    Open Account
+                                </Link>
+                            </motion.div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+        </motion.nav>
     );
 }

@@ -10,15 +10,17 @@ export default function UpdateProfileInformation({
 }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
             name: user.name,
             email: user.email,
+            avatar: null,
+            _method: 'PATCH',
         });
 
     const submit = (e) => {
         e.preventDefault();
-        patch(route('profile.update'));
+        post(route('profile.update'));
     };
 
     const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 border ${err ? 'border-black' : 'border-gray-100'} rounded-2xl text-black text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white focus:ring-[12px] focus:ring-black/5 focus:border-black transition-all duration-500`;
@@ -28,6 +30,33 @@ export default function UpdateProfileInformation({
     return (
         <section className={className}>
             <form onSubmit={submit} className="space-y-8">
+                {/* Avatar Upload */}
+                <div className="flex flex-col sm:flex-row items-center gap-8 pb-8 border-b border-gray-50">
+                    <div className="relative group">
+                        <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-50 shadow-xl relative">
+                            {data.avatar ? (
+                                <img src={URL.createObjectURL(data.avatar)} className="w-full h-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full bg-black flex items-center justify-center text-white text-3xl font-black italic">
+                                    {user.avatar ? (
+                                        <img src={`/storage/${user.avatar}`} className="w-full h-full object-cover" />
+                                    ) : user.name[0]}
+                                </div>
+                            )}
+                        </div>
+                        <label className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-full">
+                            <span className="text-[9px] font-black uppercase text-white tracking-widest">Change</span>
+                            <input type="file" className="hidden" onChange={e => setData('avatar', e.target.files[0])} />
+                        </label>
+                    </div>
+                    <div className="text-center sm:text-left">
+                        <h4 className="text-sm font-black uppercase tracking-tighter mb-1">Profile Identity</h4>
+                        <p className="text-[10px] font-medium text-gray-400 uppercase tracking-widest leading-relaxed">
+                            Recommended: Square image, 500x500px.<br />Max size: 2MB.
+                        </p>
+                    </div>
+                </div>
+
                 <div>
                     <label htmlFor="name" className={labelCls}>Full Name</label>
                     <input

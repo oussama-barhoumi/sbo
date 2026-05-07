@@ -632,7 +632,7 @@ export default function BankingDashboard() {
 
                         {/* Recent Transactions */}
                         <motion.div variants={itemVars} className="bg-white rounded-[4rem] p-10 border border-gray-100 shadow-2xl shadow-gray-200/50 h-full max-h-[700px] flex flex-col">
-                            <div className="flex items-center justify-between mb-12">
+                            <div className="flex items-center justify-between mb-8">
                                 <h3 className="text-2xl font-black tracking-tighter">Activity Ledger</h3>
                                 <div className="flex gap-2">
                                     <button 
@@ -642,10 +642,18 @@ export default function BankingDashboard() {
                                     >
                                         <ArrowDownLeft className="w-5 h-5 rotate-180" />
                                     </button>
-                                    <div className="w-10 h-10 bg-gray-50 rounded-full flex items-center justify-center text-gray-300 no-print">
-                                        <HistoryIcon className="w-5 h-5" />
-                                    </div>
                                 </div>
+                            </div>
+
+                            {/* Search Filter */}
+                            <div className="relative mb-8 no-print">
+                                <input 
+                                    type="text" 
+                                    placeholder="Search transactions..." 
+                                    className="w-full bg-gray-50 border-none rounded-2xl py-4 pl-12 text-xs font-bold focus:ring-2 focus:ring-black/5 transition-all"
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <HistoryIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300" />
                             </div>
 
                             <div className="space-y-2 overflow-y-auto pr-2 custom-scrollbar flex-1 print-area">
@@ -662,7 +670,13 @@ export default function BankingDashboard() {
                                         </div>
                                     </div>
                                 </div>
-                                {(profile?.transactions?.length > 0 ? profile.transactions : [
+                                {(profile?.transactions?.filter(t => 
+                                    t.counterparty_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    t.amount.toString().includes(searchQuery)
+                                ).length > 0 ? profile.transactions.filter(t => 
+                                    t.counterparty_name?.toLowerCase().includes(searchQuery.toLowerCase()) || 
+                                    t.amount.toString().includes(searchQuery)
+                                ) : [
                                     { icon: <Globe />, label: 'Swift Transfer', date: 'Oct 24', amount: -450.00 },
                                     { icon: <CreditCard />, label: 'POS Terminal', date: 'Oct 22', amount: -4.50 },
                                     { icon: <TrendingUp />, label: 'Asset Yield', date: 'Oct 21', amount: 125.40 },

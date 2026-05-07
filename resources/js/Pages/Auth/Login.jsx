@@ -53,10 +53,10 @@ function LoginContent({ status, canResetPassword }) {
                 setSuccess(true);
                 setTimeout(() => { window.location.href = '/banking'; }, 2000);
             } else {
-                setErrors(data.errors || { form: data.message || 'Invalid credentials.' });
+                setErrors(data.errors || { form: data.message || t('auth.errors.invalid_credentials') });
             }
         } catch {
-            setErrors({ form: 'Connection error. Please try again.' });
+            setErrors({ form: t('auth.errors.connection') });
         } finally {
             setSubmitting(false);
         }

@@ -92,11 +92,11 @@ function RegisterContent() {
 
     const runKycSequence = async () => {
         const messages = [
-            "Please show your face clearly...",
-            "Face detected. Now hold your ID next to your face...",
-            "ID detected. Processing OCR...",
-            "Please turn your head slightly to the right...",
-            "Liveness verified. Finalizing..."
+            t('register.kyc.msg.face'),
+            t('register.kyc.msg.id'),
+            t('register.kyc.msg.ocr'),
+            t('register.kyc.msg.liveness'),
+            t('register.kyc.msg.finalizing')
         ];
 
         for (let i = 0; i < messages.length; i++) {
@@ -257,11 +257,10 @@ function RegisterContent() {
                 >
                     <div className="flex items-center gap-3 mb-8">
                         <div className="w-3 h-3 bg-black dark:bg-white rounded-full animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">Onboarding Protocol</span>
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">{t('register.protocol')}</span>
                     </div>
                     <h1 className="text-8xl font-black tracking-tighter leading-[0.8] text-black dark:text-white uppercase italic mb-10">
-                        Join The <br />
-                        Network.
+                        {t('register.join_title')}
                     </h1>
                     <p className="text-xl text-gray-500 dark:text-white/40 font-medium leading-relaxed max-w-md mb-12">
                         {t('register.subtitle')}
@@ -269,9 +268,9 @@ function RegisterContent() {
 
                     <div className="space-y-8">
                         {[
-                            { icon: Shield, title: 'Institutional Security', desc: 'Military-grade 256-bit encryption' },
-                            { icon: Globe, title: 'Global Recognition', desc: 'Accepted at 40M+ merchants worldwide' },
-                            { icon: Lock, title: 'Privacy Guaranteed', desc: 'Zero data sharing with third parties' }
+                            { icon: Shield, title: t('register.features.security.title'), desc: t('register.features.security.desc') },
+                            { icon: Globe, title: t('register.features.global.title'), desc: t('register.features.global.desc') },
+                            { icon: Lock, title: t('register.features.privacy.title'), desc: t('register.features.privacy.desc') }
                         ].map((item, i) => (
                             <div key={i} className="flex gap-6">
                                 <div className="w-12 h-12 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center border border-gray-100 dark:border-white/10">
@@ -318,11 +317,11 @@ function RegisterContent() {
 
                                 <div className="bg-gray-50 dark:bg-white/5 rounded-3xl p-8 text-left space-y-4 mb-10 border border-gray-100 dark:border-white/10">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-black uppercase text-gray-400 dark:text-white/20">Account Number</span>
+                                        <span className="text-[10px] font-black uppercase text-gray-400 dark:text-white/20">{t('register.success.account_number')}</span>
                                         <span className="text-sm font-black text-black dark:text-white font-mono">{result.accountId}</span>
                                     </div>
                                     <div className="flex justify-between items-center">
-                                        <span className="text-[10px] font-black uppercase text-gray-400 dark:text-white/20">Initial Currency</span>
+                                        <span className="text-[10px] font-black uppercase text-gray-400 dark:text-white/20">{t('register.success.initial_currency')}</span>
                                         <span className="text-sm font-black text-black dark:text-white">{result.currency}</span>
                                     </div>
                                 </div>
@@ -335,7 +334,7 @@ function RegisterContent() {
                             <motion.div key="form" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
                                 <div className="mb-12">
                                     <div className="flex items-center gap-2 mb-4">
-                                        <span className="text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">Step {currentStep + 1} of {STEPS.length}</span>
+                                        <span className="text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{t('register.step_info', { current: currentStep + 1, total: STEPS.length })}</span>
                                     </div>
                                     <h3 className="text-3xl font-black text-black dark:text-white tracking-tighter uppercase italic">{step.label}</h3>
                                     <p className="text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest mt-2">{step.hint}</p>

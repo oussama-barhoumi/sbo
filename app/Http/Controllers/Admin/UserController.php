@@ -47,7 +47,7 @@ class UserController extends Controller
                 'phone'         => $user->phone,
                 'status'        => $user->status,
                 'balance'       => (float) ($primaryAccount?->balance ?? 0),
-                'lastActivity'  => $user->last_login_at ? $user->last_login_at->diffForHumans() : 'Never',
+                'lastActivity'  => $user->last_login_at ? $user->last_login_at->diffForHumans() : __('admin.common.never'),
                 'createdAt'     => $user->created_at->format('M d, Y'),
                 'isSuspicious'  => $suspiciousData['isSuspicious'],
                 'flags'         => $suspiciousData['flags'],
@@ -77,7 +77,7 @@ class UserController extends Controller
         $admin = $request->user();
 
         if ($user->id === $admin->id) {
-            return back()->withErrors(['error' => 'You cannot block yourself.']);
+            return back()->withErrors(['error' => __('admin.common.error_self_block')]);
         }
 
         $user->update(['status' => 'blocked']);
@@ -91,7 +91,7 @@ class UserController extends Controller
             'ip_address'     => $request->ip(),
         ]);
 
-        return back()->with('success', "User {$user->name} has been blocked.");
+        return back()->with('success', __('admin.common.user_blocked', ['name' => $user->name]));
     }
 
     public function unblock(Request $request, $id)
@@ -111,7 +111,7 @@ class UserController extends Controller
             'ip_address'     => $request->ip(),
         ]);
 
-        return back()->with('success', "User {$user->name} has been reactivated.");
+        return back()->with('success', __('admin.common.user_unblocked', ['name' => $user->name]));
     }
 
     private function detectSuspiciousActivity(User $user, $account): array
@@ -124,7 +124,7 @@ class UserController extends Controller
             ->count();
         if ($failedAttempts > 5) {
             $isSuspicious = true;
-            $flags[] = "Excessive failed logins";
+            $flags[] = __('admin.flags.failed_logins');
         }
 
         if ($account) {
@@ -135,7 +135,7 @@ class UserController extends Controller
                 ->count();
             if ($largeTxns > 0) {
                 $isSuspicious = true;
-                $flags[] = "Large transactions";
+                $flags[] = __('admin.flags.large_transactions');
             }
         }
 
@@ -145,7 +145,7 @@ class UserController extends Controller
             ->count();
         if ($uniqueIps > 3) {
             $isSuspicious = true;
-            $flags[] = "Multi-IP login";
+            $flags[] = __('admin.flags.multi_ip');
         }
 
         return [

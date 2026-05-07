@@ -86,14 +86,14 @@ class RegisterAccountController extends Controller
         $value = request()->input('value');
 
         if (! $field || ! in_array($field, ['full_name', 'email', 'phone', 'password', 'preferred_currency', 'kyc_status'])) {
-            return response()->json(['valid' => false, 'message' => 'Invalid field.'], 422);
+            return response()->json(['valid' => false, 'message' => __('register.errors.invalid_field')], 422);
         }
 
         // Build a temporary request with just this field to validate
         $rules = (new StoreRegistrationRequest())->rules();
 
         if (! isset($rules[$field])) {
-            return response()->json(['valid' => false, 'message' => 'Unknown field.'], 422);
+            return response()->json(['valid' => false, 'message' => __('register.errors.unknown_field')], 422);
         }
 
         $validator = validator([$field => $value], [$field => $rules[$field]]);

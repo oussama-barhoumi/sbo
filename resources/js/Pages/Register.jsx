@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/Components/Landing/Navbar';
 import Footer from '@/Components/Landing/Footer';
 
@@ -262,19 +263,25 @@ export default function Register() {
             <Head title="Open an Account" />
             <Navbar />
 
-            <section className="min-h-screen pt-28 pb-20 flex items-start justify-center">
-                <div className="w-full max-w-lg mx-auto px-5 sm:px-8">
+            <section className="min-h-screen pt-28 pb-20 flex items-start justify-center bg-gradient-to-br from-harbor-950 via-harbor-900 to-harbor-950 relative overflow-hidden">
+                {/* Background effects */}
+                <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                    <div className="absolute top-1/3 -left-32 w-96 h-96 bg-accent-violet/5 rounded-full blur-3xl" />
+                    <div className="absolute bottom-1/3 -right-32 w-96 h-96 bg-accent-blue/5 rounded-full blur-3xl" />
+                    <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:'linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)',backgroundSize:'60px 60px'}} />
+                </div>
+                <motion.div initial={{opacity:0,y:30}} animate={{opacity:1,y:0}} transition={{duration:0.6,ease:[0.25,0.46,0.45,0.94]}} className="w-full max-w-lg mx-auto px-5 sm:px-8 relative z-10">
                     {/* Progress bar */}
                     <div className="mb-10">
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-semibold text-harbor-500">
+                            <span className="text-xs font-semibold text-white/50">
                                 {result ? 'Complete' : `Step ${currentStep + 1} of ${STEPS.length}`}
                             </span>
-                            <span className="text-xs font-medium text-harbor-400">{Math.round(progress)}%</span>
+                            <span className="text-xs font-medium text-white/30">{Math.round(progress)}%</span>
                         </div>
-                        <div className="h-1.5 bg-harbor-100 rounded-full overflow-hidden">
+                        <div className="h-1.5 bg-white/10 rounded-full overflow-hidden">
                             <div
-                                className="h-full bg-harbor-950 rounded-full transition-all duration-500 ease-out"
+                                className="h-full bg-gradient-to-r from-accent-blue to-accent-cyan rounded-full transition-all duration-500 ease-out"
                                 style={{ width: `${progress}%` }}
                             />
                         </div>
@@ -327,10 +334,10 @@ export default function Register() {
                     ) : (
                         /* ── Form Steps ── */
                         <div>
-                            <h1 className="text-3xl font-extrabold text-harbor-950 tracking-tight mb-2">
+                            <h1 className="text-3xl font-extrabold text-white tracking-tight mb-2">
                                 Open an Account
                             </h1>
-                            <p className="text-harbor-500 mb-10">
+                            <p className="text-white/40 mb-10">
                                 Secure, fast, and easy. Let's set up your HarborBank account.
                             </p>
 
@@ -341,9 +348,9 @@ export default function Register() {
                                         <div
                                             key={s.field}
                                             className={`h-1.5 rounded-full transition-all duration-300 ${
-                                                i < currentStep ? 'bg-emerald-500 flex-1' :
-                                                i === currentStep ? 'bg-harbor-950 flex-[2]' :
-                                                'bg-harbor-200 flex-1'
+                                                i < currentStep ? 'bg-emerald-400 flex-1' :
+                                                i === currentStep ? 'bg-gradient-to-r from-accent-blue to-accent-cyan flex-[2]' :
+                                                'bg-white/10 flex-1'
                                             }`}
                                         />
                                     ))}
@@ -351,11 +358,11 @@ export default function Register() {
 
                                 <label
                                     htmlFor={step.field}
-                                    className="block text-sm font-bold text-harbor-950 mb-1"
+                                    className="block text-sm font-bold text-white mb-1"
                                 >
                                     {step.label}
                                 </label>
-                                <p className="text-xs text-harbor-400 mb-4">{step.hint}</p>
+                                <p className="text-xs text-white/40 mb-4">{step.hint}</p>
 
                                 {/* Input rendering */}
                                 {step.type === 'select' ? (
@@ -609,7 +616,7 @@ export default function Register() {
                             </form>
 
                             {/* Security note */}
-                            <div className="flex items-center gap-2 mt-8 text-xs text-harbor-400">
+                            <div className="flex items-center gap-2 mt-8 text-xs text-white/30">
                                 <svg className="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
                                 </svg>
@@ -617,7 +624,7 @@ export default function Register() {
                             </div>
                         </div>
                     )}
-                </div>
+                </motion.div>
             </section>
 
             <Footer />

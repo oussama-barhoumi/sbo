@@ -53,11 +53,11 @@ export default function Dashboard() {
             header={
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-2 h-2 bg-black rounded-full animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400">Quantum Link Established</span>
+                        <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">Quantum Link Established</span>
                     </div>
                     <div className="flex items-center justify-between">
-                        <h2 className="text-4xl font-black tracking-tighter text-black italic uppercase">
+                        <h2 className="text-4xl font-black tracking-tighter text-black dark:text-white italic uppercase">
                             Overview
                         </h2>
                         <div className="flex items-center gap-4">
@@ -78,7 +78,7 @@ export default function Dashboard() {
 
             <div className="py-20 px-8 relative overflow-hidden">
                 {/* Subtle Background Elements */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-black/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-black/5 dark:bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
                 
                 <motion.div 
                     variants={containerVars}
@@ -87,43 +87,43 @@ export default function Dashboard() {
                     className="mx-auto max-w-7xl grid grid-cols-1 lg:grid-cols-12 gap-10"
                 >
                     {/* Welcome Banner */}
-                    <motion.div variants={itemVars} className="lg:col-span-8 bg-white rounded-[4rem] p-16 border border-gray-100 shadow-2xl shadow-gray-200/50 relative overflow-hidden group">
+                    <motion.div variants={itemVars} className="lg:col-span-8 bg-white dark:bg-[#0a0a0a] rounded-[4rem] p-16 border border-gray-100 dark:border-white/5 shadow-2xl shadow-gray-200/50 dark:shadow-none relative overflow-hidden group transition-colors">
                         <div className="relative z-10">
                             <WordReveal 
                                 text="Your command center is ready." 
-                                className="text-6xl font-black mb-6 tracking-tighter leading-[0.95] block" 
+                                className="text-6xl font-black mb-6 tracking-tighter leading-[0.95] block dark:text-white" 
                             />
-                            <p className="text-gray-400 text-lg font-medium max-w-lg mb-12 tracking-tight">
+                            <p className="text-gray-400 dark:text-white/40 text-lg font-medium max-w-lg mb-12 tracking-tight">
                                 Access your encrypted financial portal to manage assets, execute transfers, and monitor market movements in real-time.
                             </p>
                             <Magnetic>
                                 <Link 
                                     href="/banking" 
-                                    className="inline-flex items-center gap-6 bg-black text-white px-10 py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-gray-800 transition-all group shadow-xl shadow-black/10"
+                                    className="inline-flex items-center gap-6 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-gray-800 dark:hover:bg-gray-200 transition-all group shadow-xl shadow-black/10 dark:shadow-none"
                                 >
                                     Enter Banking Vault
-                                    <Zap className="w-4 h-4 fill-white group-hover:scale-125 transition-transform" />
+                                    <Zap className="w-4 h-4 fill-white dark:fill-black group-hover:scale-125 transition-transform" />
                                 </Link>
                             </Magnetic>
                         </div>
                         
                         {/* Decorative Abstract Element */}
-                        <div className="absolute bottom-0 right-0 w-64 h-64 border-l border-t border-gray-100 rounded-tl-[10rem] group-hover:scale-110 transition-transform duration-1000" />
+                        <div className="absolute bottom-0 right-0 w-64 h-64 border-l border-t border-gray-100 dark:border-white/5 rounded-tl-[10rem] group-hover:scale-110 transition-transform duration-1000" />
                     </motion.div>
 
                     {/* Quick Security Status */}
-                    <motion.div variants={itemVars} className="lg:col-span-4 bg-black text-white rounded-[4rem] p-12 shadow-2xl shadow-black/20 flex flex-col justify-between relative overflow-hidden">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)] pointer-events-none" />
+                    <motion.div variants={itemVars} className="lg:col-span-4 bg-black dark:bg-white text-white dark:text-black rounded-[4rem] p-12 shadow-2xl shadow-black/20 dark:shadow-none flex flex-col justify-between relative overflow-hidden transition-colors">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)] dark:bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.05),transparent)] pointer-events-none" />
                         
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-10">
-                                <ShieldCheck className="w-10 h-10 text-white" />
-                                <div className="px-4 py-1.5 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/10">Active</div>
+                                <ShieldCheck className="w-10 h-10 text-white dark:text-black" />
+                                <div className="px-4 py-1.5 bg-white/10 dark:bg-black/5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/10 dark:border-black/5">Active</div>
                             </div>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-3">Total Liquid Assets</p>
                             <h4 className="text-5xl font-black tracking-tighter tabular-nums mb-4">$48,250</h4>
-                            <div className="flex items-center gap-3 text-xs font-black tracking-widest text-emerald-400">
-                                <ArrowUpRight className="w-5 h-5" /> +12.4% <span className="text-white/40 uppercase">THIS YEAR</span>
+                            <div className="flex items-center gap-3 text-xs font-black tracking-widest text-emerald-400 dark:text-emerald-600">
+                                <ArrowUpRight className="w-5 h-5" /> +12.4% <span className="text-white/40 dark:text-black/40 uppercase">THIS YEAR</span>
                             </div>
                         </div>
 
@@ -132,11 +132,11 @@ export default function Dashboard() {
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Network Health</span>
                                 <span className="text-[10px] font-black tracking-widest">ENCRYPTED</span>
                             </div>
-                            <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                            <div className="w-full h-1.5 bg-white/10 dark:bg-black/5 rounded-full overflow-hidden">
                                 <motion.div 
                                     initial={{ width: 0 }}
                                     animate={{ width: '92%' }}
-                                    className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" 
+                                    className="h-full bg-white dark:bg-black shadow-[0_0_15px_rgba(255,255,255,0.5)] dark:shadow-none" 
                                 />
                             </div>
                         </div>
@@ -154,13 +154,13 @@ export default function Dashboard() {
                             variants={itemVars}
                             whileHover={{ y: -10 }}
                             onClick={() => window.location.href = feature.href}
-                            className="lg:col-span-3 bg-white rounded-[3rem] p-10 border border-gray-100 shadow-xl shadow-gray-200/30 hover:border-black transition-all cursor-pointer group"
+                            className="lg:col-span-3 bg-white dark:bg-[#0a0a0a] rounded-[3rem] p-10 border border-gray-100 dark:border-white/5 shadow-xl shadow-gray-200/30 dark:shadow-none hover:border-black dark:hover:border-white transition-all cursor-pointer group"
                         >
-                            <div className="w-16 h-16 bg-gray-50 rounded-[1.5rem] flex items-center justify-center mb-10 border border-gray-100 group-hover:bg-black group-hover:text-white transition-all duration-500">
+                            <div className="w-16 h-16 bg-gray-50 dark:bg-white/5 rounded-[1.5rem] flex items-center justify-center mb-10 border border-gray-100 dark:border-white/5 group-hover:bg-black dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-black transition-all duration-500">
                                 {feature.icon}
                             </div>
-                            <h4 className="text-xl font-black mb-3 tracking-tighter uppercase italic">{feature.title}</h4>
-                            <p className="text-gray-400 text-sm font-medium leading-relaxed tracking-tight">{feature.desc}</p>
+                            <h4 className="text-xl font-black mb-3 tracking-tighter uppercase italic dark:text-white">{feature.title}</h4>
+                            <p className="text-gray-400 dark:text-white/20 text-sm font-medium leading-relaxed tracking-tight">{feature.desc}</p>
                         </motion.div>
                     ))}
                 </motion.div>

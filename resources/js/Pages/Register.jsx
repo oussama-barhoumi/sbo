@@ -215,7 +215,7 @@ function RegisterContent() {
             const data = await res.json();
             if (data.token) localStorage.setItem('bank_token', data.token);
             setResult(data);
-            setTimeout(() => { window.location.href = '/banking'; }, 3000);
+            setTimeout(() => { window.location.href = '/dashboard'; }, 3000);
         } catch {
             setErrors({ submit: 'An unexpected error occurred.' });
         } finally {
@@ -326,7 +326,7 @@ function RegisterContent() {
                                     </div>
                                 </div>
 
-                                <Link href="/banking" className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl block hover:scale-[1.02] active:scale-95 transition-all">
+                                <Link href="/dashboard" className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl block hover:scale-[1.02] active:scale-95 transition-all text-center">
                                     {t('register.success.cta')}
                                 </Link>
                             </motion.div>
@@ -459,8 +459,6 @@ function RegisterContent() {
 
 export default function Register() {
     return (
-        <AppProvider>
-            <RegisterContent />
-        </AppProvider>
+        <RegisterContent />
     );
 }

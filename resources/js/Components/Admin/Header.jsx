@@ -1,11 +1,13 @@
 import React from 'react';
-import { Search, Bell, User } from 'lucide-react';
+import { Search, Bell, User, Sun, Moon } from 'lucide-react';
 import { usePage } from '@inertiajs/react';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
+import { useApp } from '@/hooks/useApp';
 
 const Header = ({ title }) => {
     const { auth } = usePage().props;
     const { t } = useLaravelReactI18n();
+    const { isDark, toggleDark } = useApp();
 
     return (
         <header className="h-28 flex items-center justify-between px-12 bg-white/80 dark:bg-black/80 backdrop-blur-xl sticky top-0 z-40 border-b border-gray-100 dark:border-white/5 selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-500">
@@ -20,6 +22,13 @@ const Header = ({ title }) => {
             </div>
 
             <div className="flex items-center gap-8">
+                {/* Theme Toggle */}
+                <button 
+                    onClick={toggleDark}
+                    className="w-12 h-12 bg-gray-50 dark:bg-white/5 rounded-2xl flex items-center justify-center text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white border border-gray-100 dark:border-white/5 transition-all group"
+                >
+                    {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+                </button>
                 <div className="relative group hidden lg:block">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-300 dark:text-white/20 group-focus-within:text-black dark:group-focus-within:text-white transition-colors" />
                     <input 

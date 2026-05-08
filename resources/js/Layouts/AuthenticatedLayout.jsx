@@ -15,7 +15,9 @@ import {
     Landmark,
     Gem,
     Zap,
-    History
+    History,
+    Sun,
+    Moon
 } from 'lucide-react';
 import Magnetic from '@/Components/Landing/Animations/Magnetic';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
@@ -23,8 +25,8 @@ import { useApp } from '@/hooks/useApp';
 
 export default function AuthenticatedLayout({ header, children }) {
     const { t } = useLaravelReactI18n();
-    const { isDark, toggleTheme } = useApp();
-    const user = usePage().props.auth.user;
+    const { isDark, toggleDark } = useApp();
+    const user = usePage().props.auth?.user || {};
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
     const [profileDropdown, setProfileDropdown] = useState(false);
     const [notificationsOpen, setNotificationsOpen] = useState(false);
@@ -69,10 +71,10 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex items-center gap-8">
                         {/* Theme Toggle */}
                         <button 
-                            onClick={toggleTheme}
+                            onClick={toggleDark}
                             className="w-10 h-10 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white transition-all group"
                         >
-                            {isDark ? <Zap className="w-4 h-4 fill-white" /> : <Zap className="w-4 h-4" />}
+                            {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
                         </button>
 
                         {/* Notifications */}
@@ -145,6 +147,15 @@ export default function AuthenticatedLayout({ header, children }) {
                                         </div>
                                         
                                         <div className="space-y-2">
+                                            {(user.role === 'admin' || user.role === 'super_admin') && (
+                                                <Link 
+                                                    href={route('admin.dashboard')} 
+                                                    className="flex items-center gap-4 px-4 py-4 rounded-xl text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-500/5 transition-all"
+                                                >
+                                                    <ShieldCheck className="w-4 h-4" />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest">Admin Portal</span>
+                                                </Link>
+                                            )}
                                             <Link href="/profile" className="flex items-center gap-4 px-4 py-4 rounded-xl text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5 transition-all">
                                                 <Settings className="w-4 h-4" />
                                                 <span className="text-[10px] font-black uppercase tracking-widest">{t('layout.profile.settings')}</span>

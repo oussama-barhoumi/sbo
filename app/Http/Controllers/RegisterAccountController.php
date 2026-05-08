@@ -39,6 +39,7 @@ class RegisterAccountController extends Controller
                 'email' => strtolower(trim($validated['email'])),
                 'phone' => trim($validated['phone']),
                 'password' => Hash::make($validated['password']),
+                'email_verified_at' => now(),
             ]);
 
             // 2. Create the bank account

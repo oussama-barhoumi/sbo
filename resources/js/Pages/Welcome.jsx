@@ -12,21 +12,19 @@ export default function Welcome() {
     const { t } = useLaravelReactI18n();
 
     return (
-        <AppProvider>
-            <div className="selection:bg-black selection:text-white transition-colors duration-500">
-                <Head title={t('welcome.title')}>
-                    <meta name="description" content={t('welcome.description')} />
-                </Head>
+        <div className="selection:bg-black selection:text-white transition-colors duration-500">
+            <Head title={t('welcome.title')}>
+                <meta name="description" content={t('welcome.description')} />
+            </Head>
 
-                <Navbar />
-                <main>
-                    <Hero />
-                    <Services />
-                    <Trust />
-                    <Promotions />
-                </main>
-                <Footer />
-            </div>
-        </AppProvider>
+            <Navbar />
+            <main>
+                <Hero />
+                <Services />
+                <Trust />
+                <Promotions />
+            </main>
+            <Footer />
+        </div>
     );
 }

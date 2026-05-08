@@ -67,7 +67,7 @@ export default function Navbar() {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0012 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75z" />
                             </svg>
                         </div>
-                        <span className="font-bold text-lg text-white tracking-tight">HarborBank</span>
+                        <span className={`font-bold text-lg tracking-tight ${isDark || scrolled ? 'text-white' : 'text-black'}`}>HarborBank</span>
                     </Link>
 
                     {/* Desktop Nav Links */}
@@ -84,7 +84,9 @@ export default function Navbar() {
                                     key={link.href}
                                     href={href}
                                     className={`relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-300 ${
-                                        isActive ? 'text-white' : 'text-white/50 hover:text-white/80'
+                                        isActive 
+                                            ? (isDark || scrolled ? 'text-white' : 'text-black') 
+                                            : (isDark || scrolled ? 'text-white/50 hover:text-white/80' : 'text-black/50 hover:text-black/80')
                                     }`}
                                 >
                                     {link.label}
@@ -112,7 +114,11 @@ export default function Navbar() {
                         {/* Dark Mode Toggle */}
                         <button
                             onClick={toggleDark}
-                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 border border-white/20 text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300"
+                            className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all duration-300 ${
+                                isDark || scrolled 
+                                    ? 'bg-white/10 border-white/20 text-white/70 hover:text-white hover:bg-white/20' 
+                                    : 'bg-black/5 border-black/10 text-black/70 hover:text-black hover:bg-black/10'
+                            }`}
                             title={isDark ? 'Light mode' : 'Dark mode'}
                         >
                             <AnimatePresence mode="wait" initial={false}>
@@ -132,7 +138,7 @@ export default function Navbar() {
                         <div className="relative">
                             <button
                                 onClick={() => setLangOpen(!langOpen)}
-                                className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 border border-white/20 text-white/70 hover:text-white hover:bg-white/20 transition-all duration-300 text-xs font-bold"
+                                className={`flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/10 border border-white/20 transition-all duration-300 text-xs font-bold ${isDark || scrolled ? 'text-white/70 hover:text-white hover:bg-white/20' : 'text-black/70 hover:text-black hover:bg-black/5'}`}
                             >
                                 <span>{currentLang.flag}</span>
                                 <span>{currentLang.label}</span>
@@ -176,7 +182,7 @@ export default function Navbar() {
                         {/* CTA Buttons */}
                         <Link
                             href="/login"
-                            className="px-5 py-2 text-sm font-medium text-white/60 hover:text-white transition-colors"
+                            className={`px-5 py-2 text-sm font-medium transition-colors ${isDark || scrolled ? 'text-white/60 hover:text-white' : 'text-black/60 hover:text-black'}`}
                         >
                             {t('nav.signIn')}
                         </Link>
@@ -192,13 +198,19 @@ export default function Navbar() {
                     <div className="lg:hidden flex items-center gap-2">
                         <button
                             onClick={toggleDark}
-                            className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 border border-white/20 text-white/70 hover:text-white transition-all"
+                            className={`w-9 h-9 flex items-center justify-center rounded-xl border transition-all ${
+                                isDark || scrolled 
+                                    ? 'bg-white/10 border-white/20 text-white/70 hover:text-white' 
+                                    : 'bg-black/5 border-black/10 text-black/70 hover:text-black'
+                            }`}
                         >
                             {isDark ? <SunIcon /> : <MoonIcon />}
                         </button>
                         <button
                             onClick={() => setMobileOpen(!mobileOpen)}
-                            className="w-10 h-10 flex items-center justify-center rounded-lg text-white/60 hover:text-white hover:bg-white/10 transition-all"
+                            className={`w-10 h-10 flex items-center justify-center rounded-lg transition-all ${
+                                isDark || scrolled ? 'text-white/60 hover:text-white hover:bg-white/10' : 'text-black/60 hover:text-black hover:bg-black/5'
+                            }`}
                             aria-label="Toggle navigation"
                         >
                             <div className="w-5 h-4 relative flex flex-col justify-between">

@@ -6,6 +6,7 @@
     "nav.trust": "Security",
     "nav.openAccount": "Open Account",
     "nav.signIn": "Sign In",
+    "nav.dashboard": "Dashboard",
 
     "hero.badge": "The Future of Digital Banking",
     "hero.title": "Banking Simplified.",
@@ -202,6 +203,7 @@
     "dashboard.recent_ledger": "My last operations",
     "dashboard.no_history": "No history yet.",
 
+    "layout.nav.dashboard": "Overview",
     "layout.nav.banking": "Bank",
     "layout.nav.treasury": "Vault",
     "layout.nav.wealth": "Savings",

@@ -6,6 +6,7 @@
     "nav.trust": "Sécurité",
     "nav.openAccount": "Ouvrir un compte",
     "nav.signIn": "Connexion",
+    "nav.dashboard": "Tableau de bord",
 
     "hero.badge": "L'avenir de la banque numérique",
     "hero.title": "La banque simplifiée.",
@@ -202,6 +203,7 @@
     "dashboard.recent_ledger": "Mes dernières opérations",
     "dashboard.no_history": "Pas encore d'historique.",
 
+    "layout.nav.dashboard": "Aperçu",
     "layout.nav.banking": "Banque",
     "layout.nav.treasury": "Coffre",
     "layout.nav.wealth": "Épargne",

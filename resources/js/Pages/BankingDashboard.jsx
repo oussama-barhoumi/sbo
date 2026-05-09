@@ -1,3 +1,4 @@
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,7 +23,8 @@ import {
     ArrowRight,
     Clock,
     Info,
-    CheckCircle
+    CheckCircle,
+    Activity
 } from 'lucide-react';
 import Magnetic from '@/Components/Landing/Animations/Magnetic';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
@@ -141,7 +143,7 @@ function ModalWrapper({ open, onClose, title, children }) {
     );
 }
 
-function DepositModal({ open, onClose, userId, onSuccess }) {
+function DepositModal({ open, onClose, userId, onSuccess, profile }) {
     const { t } = useLaravelReactI18n();
     const [form, setForm] = useState({ amount: '', currency: 'EUR', method: 'card' });
     const [err, setErr] = useState({});
@@ -181,7 +183,7 @@ function DepositModal({ open, onClose, userId, onSuccess }) {
     );
 }
 
-function TransferModal({ open, onClose, userId, onSuccess }) {
+function TransferModal({ open, onClose, userId, onSuccess, profile }) {
     const { t } = useLaravelReactI18n();
     const [form, setForm] = useState({ amount: '', recipientId: '', note: '' });
     const [err, setErr] = useState({});
@@ -221,7 +223,6 @@ function TransferModal({ open, onClose, userId, onSuccess }) {
     );
 }
 
-// ── Main Page Component ───────────────────────────────────────────────────────
 export default function BankingDashboard() {
     const { t } = useLaravelReactI18n();
     const { isDark } = useApp();
@@ -276,240 +277,222 @@ export default function BankingDashboard() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#050505] font-sans selection:bg-black selection:text-white dark:selection:bg-white dark:selection:text-black transition-colors duration-500">
+        <AuthenticatedLayout
+            header={
+                <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3 mb-2">
+                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">{t('dashboard.header.nodes_verified')}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                        <h2 className="text-4xl font-black tracking-tighter text-black dark:text-white italic uppercase">
+                            {t('dashboard.header.command_center')}
+                        </h2>
+                    </div>
+                </div>
+            }
+        >
             <Head title={t('dashboard.header.command_center')} />
             
-            {/* Global Navbar */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 px-10 py-6 flex items-center justify-between transition-colors">
-                <div className="flex items-center gap-12">
-                    <Link href="/" className="text-2xl font-black tracking-tighter italic dark:text-white">HB.</Link>
-                    <div className="hidden md:flex items-center gap-8">
-                        {['Banking', 'Treasury', 'Wealth'].map((item) => (
-                            <Link 
-                                key={item} 
-                                href={`/${item.toLowerCase()}`} 
-                                className={`text-[10px] font-black uppercase tracking-widest transition-colors ${item === 'Banking' ? 'text-black dark:text-white' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}
-                            >
-                                {item}
-                            </Link>
-                        ))}
+            <motion.div 
+                variants={containerVars}
+                initial="initial"
+                animate="animate"
+                className="grid grid-cols-1 lg:grid-cols-12 gap-12"
+            >
+                {/* Welcome Header */}
+                <motion.div variants={itemVars} className="lg:col-span-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8 pb-10 border-b border-gray-100 dark:border-white/5">
+                    <div>
+                        <WordReveal 
+                            text={`${t('dashboard.header.hello')}, ${profile?.name?.split(' ')[0] || 'Member'}`} 
+                            className="text-8xl font-black tracking-tighter block mb-4 leading-[0.8] text-black dark:text-white italic" 
+                        />
+                        <p className="text-gray-400 dark:text-white/40 font-medium tracking-tight text-xl">
+                            {t('dashboard.header.session')} <span className="text-black dark:text-white font-black uppercase text-sm ml-1 tracking-[0.2em]">Session 0x4A</span>
+                        </p>
                     </div>
-                </div>
-                <div className="flex items-center gap-6">
-                    <div className="hidden sm:flex items-center gap-4 px-4 py-2 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/10">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                        <span className="text-[9px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.header.nodes_verified')}</span>
+                    <div className="flex gap-4">
+                        <Magnetic>
+                            <button onClick={logout} className="flex items-center gap-4 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-2xl">
+                                <LogOut className="w-4 h-4" /> {t('dashboard.header.sign_out')}
+                            </button>
+                        </Magnetic>
                     </div>
-                    <button className="w-10 h-10 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white transition-all">
-                        <Bell className="w-4 h-4" />
-                    </button>
-                    <button className="w-10 h-10 rounded-xl bg-black dark:bg-white flex items-center justify-center text-white dark:text-black shadow-xl">
-                        <User className="w-4 h-4" />
-                    </button>
-                </div>
-            </nav>
+                </motion.div>
 
-            <main className="pt-32 pb-20 px-10 max-w-[1600px] mx-auto">
-                <motion.div 
-                    variants={containerVars}
-                    initial="initial"
-                    animate="animate"
-                    className="grid grid-cols-1 lg:grid-cols-12 gap-12"
-                >
-                    {/* Welcome Header */}
-                    <motion.div variants={itemVars} className="lg:col-span-12 flex flex-col sm:flex-row sm:items-end justify-between gap-8 pb-10 border-b border-gray-100 dark:border-white/5">
-                        <div>
-                            <WordReveal 
-                                text={`${t('dashboard.header.hello')}, ${profile?.name?.split(' ')[0] || 'Member'}`} 
-                                className="text-8xl font-black tracking-tighter block mb-4 leading-[0.8] text-black dark:text-white italic" 
-                            />
-                            <p className="text-gray-400 dark:text-white/40 font-medium tracking-tight text-xl">
-                                {t('dashboard.header.session')} <span className="text-black dark:text-white font-black uppercase text-sm ml-1 tracking-[0.2em]">Session 0x4A</span>
-                            </p>
+                {/* Left Column: Stats & Performance */}
+                <div className="lg:col-span-8 space-y-12">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <TiltCard className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm relative overflow-hidden group transition-colors">
+                            <div className="absolute top-0 right-0 w-48 h-48 bg-black/[0.02] dark:bg-white/[0.02] rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-1000" />
+                            <div className="relative z-10">
+                                <div className="w-14 h-14 bg-black dark:bg-white rounded-2xl flex items-center justify-center mb-10 shadow-2xl border border-white/10">
+                                    <Landmark className="w-7 h-7 text-white dark:text-black" />
+                                </div>
+                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-3">{t('dashboard.stats.liquid_assets')}</p>
+                                <h3 className="text-6xl font-black tracking-tighter mb-6 italic text-black dark:text-white">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
+                                
+                                <div className="space-y-4">
+                                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-300 dark:text-white/10">{t('dashboard.stats.account_id')}: <span className="text-black dark:text-white ml-2">{profile?.accountNumber}</span></p>
+                                    <div className="flex items-center gap-3">
+                                        <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase rounded-lg tracking-widest border border-emerald-500/20">+12.4%</div>
+                                        <span className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{t('dashboard.stats.active_growth')}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </TiltCard>
+
+                        <div className="grid grid-rows-2 gap-8">
+                            <div className="bg-white dark:bg-white/5 rounded-[2.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm flex items-center justify-between transition-colors">
+                                <div>
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-2">{t('dashboard.stats.monthly_yield')}</p>
+                                    <p className="text-3xl font-black italic text-black dark:text-white">{fmt(840.00, 'EUR')}</p>
+                                </div>
+                                <div className="w-12 h-12 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center">
+                                    <TrendingUp className="w-6 h-6 text-black dark:text-white" />
+                                </div>
+                            </div>
+                            <div className="bg-black dark:bg-white text-white dark:text-black rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden transition-colors">
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent dark:from-black/5 opacity-50" />
+                                <div className="relative z-10">
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">{t('dashboard.stats.security_score')}</p>
+                                    <p className="text-3xl font-black italic">98.2<span className="text-sm opacity-40 ml-1">/100</span></p>
+                                </div>
+                                <ShieldCheck className="w-12 h-12 absolute right-10 top-1/2 -translate-y-1/2 opacity-20" />
+                            </div>
                         </div>
-                        <div className="flex gap-4">
-                            <Magnetic>
-                                <button onClick={logout} className="flex items-center gap-4 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-2xl">
-                                    <LogOut className="w-4 h-4" /> {t('dashboard.header.sign_out')}
-                                </button>
-                            </Magnetic>
+                    </div>
+
+                    {/* Chart */}
+                    <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
+                        <div className="flex items-center justify-between mb-12">
+                            <div>
+                                <h3 className="text-3xl font-black tracking-tighter mb-2 text-black dark:text-white uppercase italic">{t('dashboard.performance.title')}</h3>
+                                <div className="flex items-center gap-3">
+                                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20">{t('dashboard.performance.subtitle')}</p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                {['week', 'month', 'year'].map(period => (
+                                    <button key={period} className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${period === 'week' ? 'bg-black dark:bg-white text-white dark:text-black shadow-xl' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:bg-gray-100 dark:hover:bg-white/10'}`}>
+                                        {t(`dashboard.performance.${period}`)}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                        
+                        <div className="h-[350px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <AreaChart data={profile?.chartData || [
+                                    { name: 'Mon', value: 2400 },
+                                    { name: 'Tue', value: 3200 },
+                                    { name: 'Wed', value: 2800 },
+                                    { name: 'Thu', value: 4500 },
+                                    { name: 'Fri', value: 3800 },
+                                    { name: 'Sat', value: 5200 },
+                                    { name: 'Sun', value: 4800 },
+                                ]}>
+                                    <defs>
+                                        <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                                            <stop offset="5%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0.05}/>
+                                            <stop offset="95%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0}/>
+                                        </linearGradient>
+                                    </defs>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"} />
+                                    <XAxis 
+                                        dataKey="name" 
+                                        axisLine={false} 
+                                        tickLine={false} 
+                                        tick={{ fontSize: 10, fontWeight: 900, fill: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)" }}
+                                        dy={10}
+                                    />
+                                    <YAxis hide />
+                                    <Tooltip 
+                                        contentStyle={{ 
+                                            backgroundColor: isDark ? "#0a0a0a" : "white", 
+                                            border: "none", 
+                                            borderRadius: "16px", 
+                                            boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
+                                            fontSize: "12px",
+                                            fontWeight: 900
+                                        }}
+                                    />
+                                    <Area 
+                                        type="monotone" 
+                                        dataKey="value" 
+                                        stroke={isDark ? "white" : "black"} 
+                                        strokeWidth={4} 
+                                        fillOpacity={1} 
+                                        fill="url(#colorValue)" 
+                                    />
+                                </AreaChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </motion.div>
+                </div>
+
+                {/* Right Column: Actions & Ledger */}
+                <div className="lg:col-span-4 space-y-8">
+                    {/* Quick Actions */}
+                    <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
+                        <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic mb-8">{t('dashboard.actions.title')}</h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <button onClick={() => setModal('deposit')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
+                                <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                    <ArrowDownLeft className="w-6 h-6" />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.actions.deposit')}</span>
+                            </button>
+                            <button onClick={() => setModal('transfer')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
+                                <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                                    <ArrowUpRight className="w-6 h-6" />
+                                </div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.actions.transfer')}</span>
+                            </button>
                         </div>
                     </motion.div>
 
-                    {/* Left Column: Stats & Performance */}
-                    <div className="lg:col-span-8 space-y-12">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <TiltCard className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm relative overflow-hidden group transition-colors">
-                                <div className="absolute top-0 right-0 w-48 h-48 bg-black/[0.02] dark:bg-white/[0.02] rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-1000" />
-                                <div className="relative z-10">
-                                    <div className="w-14 h-14 bg-black dark:bg-white rounded-2xl flex items-center justify-center mb-10 shadow-2xl border border-white/10">
-                                        <Landmark className="w-7 h-7 text-white dark:text-black" />
-                                    </div>
-                                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-3">{t('dashboard.stats.liquid_assets')}</p>
-                                    <h3 className="text-6xl font-black tracking-tighter mb-6 italic text-black dark:text-white">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
-                                    
-                                    <div className="space-y-4">
-                                        <p className="text-[9px] font-black uppercase tracking-widest text-gray-300 dark:text-white/10">{t('dashboard.stats.account_id')}: <span className="text-black dark:text-white ml-2">{profile?.accountNumber}</span></p>
-                                        <div className="flex items-center gap-3">
-                                            <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase rounded-lg tracking-widest border border-emerald-500/20">+12.4%</div>
-                                            <span className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{t('dashboard.stats.active_growth')}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </TiltCard>
-
-                            <div className="grid grid-rows-2 gap-8">
-                                <div className="bg-white dark:bg-white/5 rounded-[2.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm flex items-center justify-between transition-colors">
-                                    <div>
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-2">{t('dashboard.stats.monthly_yield')}</p>
-                                        <p className="text-3xl font-black italic text-black dark:text-white">{fmt(840.00, 'EUR')}</p>
-                                    </div>
-                                    <div className="w-12 h-12 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center">
-                                        <TrendingUp className="w-6 h-6 text-black dark:text-white" />
-                                    </div>
-                                </div>
-                                <div className="bg-black dark:bg-white text-white dark:text-black rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden transition-colors">
-                                    <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent dark:from-black/5 opacity-50" />
-                                    <div className="relative z-10">
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">{t('dashboard.stats.security_score')}</p>
-                                        <p className="text-3xl font-black italic">98.2<span className="text-sm opacity-40 ml-1">/100</span></p>
-                                    </div>
-                                    <ShieldCheck className="w-12 h-12 absolute right-10 top-1/2 -translate-y-1/2 opacity-20" />
-                                </div>
-                            </div>
+                    {/* Recent Ledger */}
+                    <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm h-[600px] flex flex-col transition-colors">
+                        <div className="flex items-center justify-between mb-8">
+                            <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic">{t('dashboard.recent_ledger')}</h3>
+                            <Activity className="w-5 h-5 text-gray-400 dark:text-white/20" />
                         </div>
-
-                        {/* Chart */}
-                        <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
-                            <div className="flex items-center justify-between mb-12">
-                                <div>
-                                    <h3 className="text-3xl font-black tracking-tighter mb-2 text-black dark:text-white uppercase italic">{t('dashboard.performance.title')}</h3>
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
-                                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20">{t('dashboard.performance.subtitle')}</p>
-                                    </div>
-                                </div>
-                                <div className="flex gap-2">
-                                    {['week', 'month', 'year'].map(period => (
-                                        <button key={period} className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${period === 'week' ? 'bg-black dark:bg-white text-white dark:text-black shadow-xl' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:bg-gray-100 dark:hover:bg-white/10'}`}>
-                                            {t(`dashboard.performance.${period}`)}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-                            
-                            <div className="h-[350px] w-full">
-                                <ResponsiveContainer width="100%" height="100%">
-                                    <AreaChart data={profile?.chartData || [
-                                        { name: 'Mon', value: 2400 },
-                                        { name: 'Tue', value: 3200 },
-                                        { name: 'Wed', value: 2800 },
-                                        { name: 'Thu', value: 4500 },
-                                        { name: 'Fri', value: 3800 },
-                                        { name: 'Sat', value: 5200 },
-                                        { name: 'Sun', value: 4800 },
-                                    ]}>
-                                        <defs>
-                                            <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0.05}/>
-                                                <stop offset="95%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0}/>
-                                            </linearGradient>
-                                        </defs>
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"} />
-                                        <XAxis 
-                                            dataKey="name" 
-                                            axisLine={false} 
-                                            tickLine={false} 
-                                            tick={{ fontSize: 10, fontWeight: 900, fill: isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)" }}
-                                            dy={10}
-                                        />
-                                        <YAxis hide />
-                                        <Tooltip 
-                                            contentStyle={{ 
-                                                backgroundColor: isDark ? "#0a0a0a" : "white", 
-                                                border: "none", 
-                                                borderRadius: "16px", 
-                                                boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)",
-                                                fontSize: "12px",
-                                                fontWeight: 900
-                                            }}
-                                        />
-                                        <Area 
-                                            type="monotone" 
-                                            dataKey="value" 
-                                            stroke={isDark ? "white" : "black"} 
-                                            strokeWidth={4} 
-                                            fillOpacity={1} 
-                                            fill="url(#colorValue)" 
-                                        />
-                                    </AreaChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </motion.div>
-                    </div>
-
-                    {/* Right Column: Actions & Ledger */}
-                    <div className="lg:col-span-4 space-y-8">
-                        {/* Quick Actions */}
-                        <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
-                            <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic mb-8">{t('dashboard.actions.title')}</h3>
-                            <div className="grid grid-cols-2 gap-4">
-                                <button onClick={() => setModal('deposit')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
-                                    <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                        <ArrowDownLeft className="w-6 h-6" />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.actions.deposit')}</span>
-                                </button>
-                                <button onClick={() => setModal('transfer')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
-                                    <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                        <ArrowUpRight className="w-6 h-6" />
-                                    </div>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.actions.transfer')}</span>
-                                </button>
-                            </div>
-                        </motion.div>
-
-                        {/* Recent Ledger */}
-                        <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm h-[600px] flex flex-col transition-colors">
-                            <div className="flex items-center justify-between mb-8">
-                                <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic">{t('dashboard.recent_ledger')}</h3>
-                                <Activity className="w-5 h-5 text-gray-400 dark:text-white/20" />
-                            </div>
-                            
-                            <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                                {(profile?.ledger || []).length > 0 ? (
-                                    profile.ledger.map((entry, i) => (
-                                        <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-black/20 transition-all group">
-                                            <div className="flex items-center gap-4">
-                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${entry.type === 'credit' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
-                                                    {entry.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
-                                                </div>
-                                                <div>
-                                                    <p className="text-[11px] font-black uppercase tracking-tight text-black dark:text-white">{entry.description || t('dashboard.institutional_trx')}</p>
-                                                    <div className="flex items-center gap-2 mt-0.5">
-                                                        <Clock className="w-3 h-3 text-gray-300 dark:text-white/10" />
-                                                        <p className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{new Date(entry.created_at).toLocaleDateString()}</p>
-                                                    </div>
-                                                </div>
+                        
+                        <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                            {(profile?.ledger || []).length > 0 ? (
+                                profile.ledger.map((entry, i) => (
+                                    <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-black/20 transition-all group">
+                                        <div className="flex items-center gap-4">
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${entry.type === 'credit' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
+                                                {entry.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
                                             </div>
-                                            <div className="text-right">
-                                                <p className={`text-xs font-black italic ${entry.type === 'credit' ? 'text-emerald-600' : 'text-red-600'}`}>
-                                                    {entry.type === 'credit' ? '+' : '-'}{fmt(entry.amount, profile.currency)}
-                                                </p>
+                                            <div>
+                                                <p className="text-[11px] font-black uppercase tracking-tight text-black dark:text-white">{entry.description || t('dashboard.institutional_trx')}</p>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <Clock className="w-3 h-3 text-gray-300 dark:text-white/10" />
+                                                    <p className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{new Date(entry.created_at).toLocaleDateString()}</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    ))
-                                ) : (
-                                    <div className="flex-1 flex flex-col items-center justify-center text-center opacity-30">
-                                        <Info className="w-12 h-12 mb-4" />
-                                        <p className="text-[10px] font-black uppercase tracking-widest">{t('dashboard.no_history')}</p>
+                                        <div className="text-right">
+                                            <p className={`text-xs font-black italic ${entry.type === 'credit' ? 'text-emerald-600' : 'text-red-600'}`}>
+                                                {entry.type === 'credit' ? '+' : '-'}{fmt(entry.amount, profile.currency)}
+                                            </p>
+                                        </div>
                                     </div>
-                                )}
-                            </div>
-                        </motion.div>
-                    </div>
-                </motion.div>
-            </main>
+                                ))
+                            ) : (
+                                <div className="flex-1 flex flex-col items-center justify-center text-center opacity-30">
+                                    <Info className="w-12 h-12 mb-4" />
+                                    <p className="text-[10px] font-black uppercase tracking-widest">{t('dashboard.no_history')}</p>
+                                </div>
+                            )}
+                        </div>
+                    </motion.div>
+                </div>
+            </motion.div>
 
             {/* Modals */}
             <DepositModal 
@@ -524,6 +507,7 @@ export default function BankingDashboard() {
                 userId={profile?.id} 
                 onSuccess={loadProfile} 
             />
-        </div>
+        </AuthenticatedLayout>
     );
 }
+

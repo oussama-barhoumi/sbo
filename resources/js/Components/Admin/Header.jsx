@@ -16,7 +16,7 @@ const Header = ({ title }) => {
                 <div className="flex items-center gap-2 mt-1">
                     <div className="w-1.5 h-1.5 bg-black dark:bg-white rounded-full animate-pulse" />
                     <p className="text-gray-400 dark:text-white/20 text-[10px] font-black uppercase tracking-[0.2em]">
-                        {t('admin.header.active')}: {auth.user.name}
+                        {t('admin.header.active')}: {auth?.user?.name}
                     </p>
                 </div>
             </div>
@@ -46,11 +46,11 @@ const Header = ({ title }) => {
 
                     <div className="flex items-center gap-4 pl-8 border-l border-gray-100 dark:border-white/5">
                         <div className="text-right hidden sm:block">
-                            <p className="text-xs font-black text-black dark:text-white uppercase tracking-widest">{auth.user.name}</p>
-                            <p className="text-[9px] text-gray-400 dark:text-white/20 font-black uppercase tracking-[0.3em] mt-0.5 italic">{auth.user.role.replace('_', ' ')}</p>
+                            <p className="text-xs font-black text-black dark:text-white uppercase tracking-widest">{auth?.user?.name}</p>
+                            <p className="text-[9px] text-gray-400 dark:text-white/20 font-black uppercase tracking-[0.3em] mt-0.5 italic">{auth?.user?.role?.replace('_', ' ')}</p>
                         </div>
                         <div className="w-14 h-14 bg-black dark:bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-black/10 dark:shadow-none group cursor-pointer hover:scale-105 transition-transform overflow-hidden border-2 border-gray-50 dark:border-white/10">
-                            {auth.user.avatar ? (
+                            {auth?.user?.avatar ? (
                                 <img src={`/storage/${auth.user.avatar}`} className="w-full h-full object-cover" alt={auth.user.name} />
                             ) : (
                                 <User className="text-white dark:text-black w-6 h-6" />

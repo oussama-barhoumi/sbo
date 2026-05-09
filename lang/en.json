@@ -207,6 +207,7 @@
     "layout.nav.banking": "Bank",
     "layout.nav.treasury": "Vault",
     "layout.nav.wealth": "Savings",
+    "layout.nav.salary": "Salary Tool",
     "layout.nav.audit": "Security",
     "layout.profile.title": "My Profile",
     "layout.profile.settings": "Settings",

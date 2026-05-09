@@ -29,6 +29,7 @@ Route::post('/register-account/verify-kyc', [RegisterAccountController::class, '
 Route::get('/dashboard', fn() => Inertia::render('Dashboard'))->middleware(['auth', 'verified'])->name('dashboard');
 Route::get('/treasury', fn() => Inertia::render('Treasury'))->middleware(['auth'])->name('treasury');
 Route::get('/wealth', fn() => Inertia::render('Wealth'))->middleware(['auth'])->name('wealth');
+Route::get('/salary-calculator', fn() => Inertia::render('SalaryCalculator'))->middleware(['auth'])->name('salary-calculator');
 
 // Admin Dashboard Routes
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {

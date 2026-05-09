@@ -52,11 +52,11 @@ export default function SalaryCalculator() {
     }, [grossSalary, transport, housing, otherExpenses, taxRate]);
 
     const chartData = [
-        { name: 'Net Salary', value: Math.max(0, calculations.netSalary), color: '#000000' },
-        { name: 'Tax', value: calculations.taxAmount, color: '#94a3b8' },
-        { name: 'Housing', value: housing, color: '#475569' },
-        { name: 'Transport', value: transport, color: '#cbd5e1' },
-        { name: 'Other', value: otherExpenses, color: '#f1f5f9' },
+        { name: 'Net Salary', value: Math.max(0, calculations.netSalary), color: '#3b82f6' },
+        { name: 'Tax', value: calculations.taxAmount, color: '#06b6d4' },
+        { name: 'Housing', value: housing, color: '#8b5cf6' },
+        { name: 'Transport', value: transport, color: '#64748b' },
+        { name: 'Other', value: otherExpenses, color: '#cbd5e1' },
     ];
 
     const containerVars = {
@@ -70,31 +70,31 @@ export default function SalaryCalculator() {
     };
 
     const InputGroup = ({ label, value, min, max, step, onChange, icon: Icon, unit = "$" }) => (
-        <div className="space-y-6 p-6 lg:p-8 bg-gray-50 dark:bg-white/5 rounded-[2rem] border border-transparent hover:border-black dark:hover:border-white transition-all group relative overflow-hidden">
+        <div className="space-y-6 p-6 lg:p-8 bg-gray-50 dark:bg-white/5 rounded-[2rem] border border-transparent hover:border-accent-blue/20 transition-all group relative overflow-hidden">
             <div className="flex items-center gap-3 mb-2">
-                <div className="w-10 h-10 bg-white dark:bg-black rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform shrink-0">
-                    <Icon className="w-5 h-5 text-black dark:text-white" />
+                <div className="w-10 h-10 bg-accent-blue/10 dark:bg-accent-blue/5 rounded-xl flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform shrink-0">
+                    <Icon className="w-5 h-5 text-accent-blue" />
                 </div>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-black dark:group-hover:text-white transition-colors">{label}</span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 group-hover:text-accent-blue transition-colors">{label}</span>
             </div>
 
             <div className="flex items-center justify-between bg-white dark:bg-black/40 rounded-2xl p-2 border border-gray-100 dark:border-white/5 shadow-inner">
                 <button 
                     onClick={() => onChange(Math.max(min, value - step))}
-                    className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all active:scale-90"
+                    className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 hover:bg-accent-blue hover:text-white transition-all active:scale-90"
                 >
                     <Minus className="w-5 h-5" />
                 </button>
                 
                 <div className="flex flex-col items-center">
-                    <span className="text-2xl lg:text-3xl font-black tabular-nums tracking-tighter">
+                    <span className="text-2xl lg:text-3xl font-black tabular-nums tracking-tighter text-black dark:text-white">
                         {unit === "$" ? `$${value.toLocaleString()}` : `${value}%`}
                     </span>
                 </div>
 
                 <button 
                     onClick={() => onChange(Math.min(max, value + step))}
-                    className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-black dark:text-white hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-all active:scale-90"
+                    className="w-12 h-12 rounded-xl bg-gray-50 dark:bg-white/5 flex items-center justify-center text-gray-400 hover:bg-accent-blue hover:text-white transition-all active:scale-90"
                 >
                     <Plus className="w-5 h-5" />
                 </button>
@@ -105,7 +105,7 @@ export default function SalaryCalculator() {
                 <motion.div 
                     initial={{ width: 0 }}
                     animate={{ width: `${((value - min) / (max - min)) * 100}%` }}
-                    className="h-full bg-black/10 dark:bg-white/10"
+                    className="h-full bg-accent-blue/20"
                 />
             </div>
         </div>
@@ -116,7 +116,7 @@ export default function SalaryCalculator() {
             header={
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse" />
+                        <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">Analytical System v2.0</span>
                     </div>
                     <h2 className="text-3xl lg:text-4xl font-black tracking-tighter text-black dark:text-white italic uppercase break-words">
@@ -192,15 +192,15 @@ export default function SalaryCalculator() {
                     </motion.div>
 
                     <motion.div variants={itemVars} className="xl:col-span-5 flex flex-col gap-6">
-                        <div className="p-6 lg:p-12 bg-black dark:bg-white text-white dark:text-black rounded-[2.5rem] lg:rounded-[4rem] shadow-2xl shadow-black/20 dark:shadow-none relative overflow-hidden flex-1 flex flex-col justify-between min-h-[500px]">
-                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 dark:bg-black/5 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                        <div className="p-6 lg:p-12 bg-gradient-to-br from-accent-blue to-accent-cyan text-white rounded-[2.5rem] lg:rounded-[4rem] shadow-2xl shadow-accent-blue/20 relative overflow-hidden flex-1 flex flex-col justify-between min-h-[500px]">
+                            <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
                             
                             <div className="relative z-10">
                                 <div className="flex items-center justify-between mb-8 lg:mb-12">
-                                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 dark:bg-black/5 rounded-xl lg:rounded-2xl flex items-center justify-center">
+                                    <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white/10 rounded-xl lg:rounded-2xl flex items-center justify-center">
                                         <Wallet className="w-5 h-5 lg:w-6 lg:h-6" />
                                     </div>
-                                    <div className="px-4 py-1.5 bg-white/10 dark:bg-black/5 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">Estimated Net</div>
+                                    <div className="px-4 py-1.5 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-[0.2em]">Estimated Net</div>
                                 </div>
                                 
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-3 block">Monthly Take-Home</span>
@@ -213,11 +213,11 @@ export default function SalaryCalculator() {
                                         <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Financial Burden</span>
                                         <span className="text-xl font-black tabular-nums">{calculations.expenseRatio.toFixed(1)}%</span>
                                     </div>
-                                    <div className="w-full h-2 bg-white/10 dark:bg-black/5 rounded-full overflow-hidden">
+                                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                                         <motion.div 
                                             initial={{ width: 0 }}
                                             animate={{ width: `${Math.min(100, calculations.expenseRatio)}%` }}
-                                            className={`h-full ${calculations.expenseRatio > 50 ? 'bg-red-400' : 'bg-white dark:bg-black'}`}
+                                            className={`h-full ${calculations.expenseRatio > 50 ? 'bg-red-400' : 'bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]'}`}
                                         />
                                     </div>
                                 </div>

@@ -39,7 +39,7 @@ const Sidebar = ({ isDark, toggleDark, isCollapsed, setIsCollapsed }) => {
                 {/* Collapse Toggle Button */}
                 <button 
                     onClick={() => setIsCollapsed(!isCollapsed)}
-                    className="absolute -right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-black dark:bg-white text-white dark:text-black rounded-full flex items-center justify-center shadow-xl z-50 hover:scale-110 transition-transform"
+                    className="absolute -right-3 top-1/2 -translate-y-1/2 w-8 h-8 bg-gradient-to-br from-accent-blue to-accent-cyan text-white rounded-full flex items-center justify-center shadow-xl z-50 hover:scale-110 transition-transform"
                 >
                     {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
                 </button>
@@ -47,8 +47,8 @@ const Sidebar = ({ isDark, toggleDark, isCollapsed, setIsCollapsed }) => {
                 {/* Logo Section */}
                 <div className={`flex items-center gap-4 mb-16 px-2 overflow-hidden whitespace-nowrap ${isCollapsed ? 'justify-center' : ''}`}>
                     <Link href="/" className="flex items-center gap-4 group">
-                        <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center shadow-xl shadow-black/10 dark:shadow-none group-hover:rotate-12 transition-transform duration-500 flex-shrink-0">
-                            <Landmark className="text-white dark:text-black w-6 h-6" />
+                        <div className="w-12 h-12 bg-gradient-to-br from-accent-blue to-accent-cyan rounded-2xl flex items-center justify-center shadow-xl shadow-accent-blue/20 group-hover:rotate-12 transition-transform duration-500 flex-shrink-0">
+                            <Landmark className="text-white w-6 h-6" />
                         </div>
                         <AnimatePresence>
                             {!isCollapsed && (
@@ -79,11 +79,11 @@ const Sidebar = ({ isDark, toggleDark, isCollapsed, setIsCollapsed }) => {
                                 href={item.href}
                                 className={`flex items-center gap-4 py-4 rounded-2xl transition-all duration-500 group relative overflow-hidden whitespace-nowrap ${isCollapsed ? 'justify-center px-0' : 'px-5'} ${
                                     isActive 
-                                    ? 'bg-black dark:bg-white text-white dark:text-black shadow-2xl shadow-black/20 dark:shadow-none' 
-                                    : 'text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5'
+                                    ? 'bg-gradient-to-r from-accent-blue to-accent-cyan text-white shadow-2xl shadow-accent-blue/20' 
+                                    : 'text-gray-400 dark:text-white/20 hover:text-accent-blue dark:hover:text-white hover:bg-accent-blue/5 dark:hover:bg-white/5'
                                 }`}
                             >
-                                <item.icon className={`w-5 h-5 flex-shrink-0 transition-transform duration-500 ${isActive ? 'text-white dark:text-black' : 'group-hover:scale-110'}`} />
+                                <item.icon className={`w-5 h-5 flex-shrink-0 transition-transform duration-500 ${isActive ? 'text-white' : 'group-hover:scale-110 group-hover:text-accent-blue'}`} />
                                 <AnimatePresence>
                                     {!isCollapsed && (
                                         <motion.span 
@@ -99,7 +99,7 @@ const Sidebar = ({ isDark, toggleDark, isCollapsed, setIsCollapsed }) => {
                                 {isActive && (
                                     <motion.div 
                                         layoutId="activeTab"
-                                        className="absolute -left-2 w-1 h-8 bg-black dark:bg-white rounded-full"
+                                        className="absolute -left-2 w-1 h-8 bg-accent-blue rounded-full"
                                     />
                                 )}
                             </Link>

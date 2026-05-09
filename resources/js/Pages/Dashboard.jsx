@@ -53,23 +53,13 @@ export default function Dashboard() {
             header={
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse" />
+                        <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">Quantum Link Established</span>
                     </div>
                     <div className="flex items-center justify-between">
                         <h2 className="text-4xl font-black tracking-tighter text-black dark:text-white italic uppercase">
                             Overview
                         </h2>
-                        <div className="flex items-center gap-4">
-                            <div className="flex -space-x-2">
-                                {[1, 2, 3].map(i => (
-                                    <div key={i} className="w-8 h-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center overflow-hidden">
-                                        <div className="w-full h-full bg-black/5" />
-                                    </div>
-                                ))}
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">3 Devices Online</span>
-                        </div>
                     </div>
                 </div>
             }
@@ -78,7 +68,7 @@ export default function Dashboard() {
 
             <div className="py-20 px-8 relative overflow-hidden">
                 {/* Subtle Background Elements */}
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-black/5 dark:bg-white/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
+                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-blue/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/4 pointer-events-none" />
                 
                 <motion.div 
                     variants={containerVars}
@@ -99,31 +89,28 @@ export default function Dashboard() {
                             <Magnetic>
                                 <Link 
                                     href="/banking" 
-                                    className="inline-flex items-center gap-6 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:bg-gray-800 dark:hover:bg-gray-200 transition-all group shadow-xl shadow-black/10 dark:shadow-none"
+                                    className="inline-flex items-center gap-6 bg-gradient-to-r from-accent-blue to-accent-cyan text-white px-10 py-5 rounded-[2rem] text-xs font-black uppercase tracking-[0.3em] hover:shadow-glass hover:-translate-y-1 transition-all group"
                                 >
                                     Enter Banking Vault
-                                    <Zap className="w-4 h-4 fill-white dark:fill-black group-hover:scale-125 transition-transform" />
+                                    <Zap className="w-4 h-4 fill-white group-hover:scale-125 transition-transform" />
                                 </Link>
                             </Magnetic>
                         </div>
-                        
-                        {/* Decorative Abstract Element */}
-                        <div className="absolute bottom-0 right-0 w-64 h-64 border-l border-t border-gray-100 dark:border-white/5 rounded-tl-[10rem] group-hover:scale-110 transition-transform duration-1000" />
                     </motion.div>
 
                     {/* Quick Security Status */}
-                    <motion.div variants={itemVars} className="lg:col-span-4 bg-black dark:bg-white text-white dark:text-black rounded-[4rem] p-12 shadow-2xl shadow-black/20 dark:shadow-none flex flex-col justify-between relative overflow-hidden transition-colors">
-                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.1),transparent)] dark:bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.05),transparent)] pointer-events-none" />
+                    <motion.div variants={itemVars} className="lg:col-span-4 bg-gradient-to-br from-accent-blue to-accent-cyan text-white rounded-[4rem] p-12 shadow-2xl shadow-accent-blue/20 flex flex-col justify-between relative overflow-hidden transition-colors">
+                        <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.2),transparent)] pointer-events-none" />
                         
                         <div className="relative z-10">
                             <div className="flex items-center justify-between mb-10">
-                                <ShieldCheck className="w-10 h-10 text-white dark:text-black" />
-                                <div className="px-4 py-1.5 bg-white/10 dark:bg-black/5 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/10 dark:border-black/5">Active</div>
+                                <ShieldCheck className="w-10 h-10 text-white" />
+                                <div className="px-4 py-1.5 bg-white/20 rounded-full text-[9px] font-black uppercase tracking-[0.2em] border border-white/20">Active</div>
                             </div>
                             <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-3">Total Liquid Assets</p>
                             <h4 className="text-5xl font-black tracking-tighter tabular-nums mb-4">$48,250</h4>
-                            <div className="flex items-center gap-3 text-xs font-black tracking-widest text-emerald-400 dark:text-emerald-600">
-                                <ArrowUpRight className="w-5 h-5" /> +12.4% <span className="text-white/40 dark:text-black/40 uppercase">THIS YEAR</span>
+                            <div className="flex items-center gap-3 text-xs font-black tracking-widest text-white">
+                                <ArrowUpRight className="w-5 h-5" /> +12.4% <span className="opacity-40 uppercase">THIS YEAR</span>
                             </div>
                         </div>
 
@@ -132,11 +119,11 @@ export default function Dashboard() {
                                 <span className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40">Network Health</span>
                                 <span className="text-[10px] font-black tracking-widest">ENCRYPTED</span>
                             </div>
-                            <div className="w-full h-1.5 bg-white/10 dark:bg-black/5 rounded-full overflow-hidden">
+                            <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
                                 <motion.div 
                                     initial={{ width: 0 }}
                                     animate={{ width: '92%' }}
-                                    className="h-full bg-white dark:bg-black shadow-[0_0_15px_rgba(255,255,255,0.5)] dark:shadow-none" 
+                                    className="h-full bg-white shadow-[0_0_15px_rgba(255,255,255,0.5)]" 
                                 />
                             </div>
                         </div>

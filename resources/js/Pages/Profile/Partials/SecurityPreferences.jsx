@@ -15,10 +15,10 @@ export default function SecurityPreferences({ className = '' }) {
     const toggle = (key) => setPrefs(p => ({ ...p, [key]: !p[key] }));
 
     const Item = ({ icon: Icon, title, desc, active, onToggle }) => (
-        <div className="flex items-center justify-between p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 transition-all hover:border-black dark:hover:border-white group">
+        <div className="flex items-center justify-between p-6 rounded-3xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 transition-all hover:border-accent-blue/30 group">
             <div className="flex items-center gap-6">
                 <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-all ${
-                    active ? 'bg-black dark:bg-white text-white dark:text-black' : 'bg-white dark:bg-black text-gray-400 dark:text-white/20 border border-gray-100 dark:border-white/10'
+                    active ? 'bg-accent-blue text-white shadow-lg shadow-accent-blue/20' : 'bg-white dark:bg-white/5 text-gray-400 dark:text-white/10 border border-gray-100 dark:border-white/10'
                 }`}>
                     <Icon className="w-5 h-5" />
                 </div>
@@ -30,11 +30,11 @@ export default function SecurityPreferences({ className = '' }) {
             <button 
                 onClick={onToggle}
                 className={`w-14 h-8 rounded-full transition-all relative ${
-                    active ? 'bg-black dark:bg-white' : 'bg-gray-200 dark:bg-white/10'
+                    active ? 'bg-accent-blue' : 'bg-gray-200 dark:bg-white/10'
                 }`}
             >
                 <div className={`absolute top-1 w-6 h-6 rounded-full transition-all ${
-                    active ? 'right-1 bg-white dark:bg-black' : 'left-1 bg-white dark:bg-gray-400'
+                    active ? 'right-1 bg-white' : 'left-1 bg-white dark:bg-gray-400'
                 }`} />
             </button>
         </div>
@@ -73,7 +73,7 @@ export default function SecurityPreferences({ className = '' }) {
             
             <div className="pt-6">
                 <Magnetic>
-                    <button className="w-full bg-black dark:bg-white text-white dark:text-black py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:scale-[1.01] active:scale-[0.98] transition-all shadow-xl dark:shadow-none">
+                    <button className="w-full bg-accent-blue text-white py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:scale-[1.01] active:scale-[0.98] transition-all shadow-xl shadow-accent-blue/20">
                         Save Security Protocols
                     </button>
                 </Magnetic>

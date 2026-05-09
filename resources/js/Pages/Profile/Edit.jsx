@@ -31,6 +31,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                         <Link href="/banking" className="w-10 h-10 bg-white dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded-xl flex items-center justify-center hover:border-black dark:hover:border-white transition-all group">
                             <ArrowLeft className="w-5 h-5 text-gray-400 group-hover:text-black dark:group-hover:text-white" />
                         </Link>
+                        <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">{t('profile.subtitle')}</span>
                     </div>
                     <h2 className="text-4xl font-black tracking-tighter text-black dark:text-white italic uppercase">
@@ -51,7 +52,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <motion.div variants={itemVars} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <div className="lg:col-span-4">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-black">
+                            <div className="w-12 h-12 bg-accent-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-accent-blue/20">
                                 <User className="w-6 h-6" />
                             </div>
                             <h3 className="text-xl font-black uppercase tracking-tighter text-black dark:text-white">{t('profile.info.title')}</h3>
@@ -73,7 +74,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <motion.div variants={itemVars} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <div className="lg:col-span-4">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-black">
+                            <div className="w-12 h-12 bg-accent-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-accent-blue/20">
                                 <Lock className="w-6 h-6" />
                             </div>
                             <h3 className="text-xl font-black uppercase tracking-tighter text-black dark:text-white">{t('profile.security.title')}</h3>
@@ -91,7 +92,7 @@ export default function Edit({ mustVerifyEmail, status }) {
                 <motion.div variants={itemVars} className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <div className="lg:col-span-4">
                         <div className="flex items-center gap-4 mb-4">
-                            <div className="w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-black">
+                            <div className="w-12 h-12 bg-accent-blue rounded-2xl flex items-center justify-center text-white shadow-lg shadow-accent-blue/20">
                                 <ShieldCheck className="w-6 h-6" />
                             </div>
                             <h3 className="text-xl font-black uppercase tracking-tighter text-black dark:text-white">{t('profile.preferences.title')}</h3>

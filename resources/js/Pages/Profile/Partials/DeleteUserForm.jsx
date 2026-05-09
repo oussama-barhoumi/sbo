@@ -42,7 +42,7 @@ export default function DeleteUserForm({ className = '' }) {
         reset();
     };
 
-    const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/10 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/20'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/20 focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 focus:border-black dark:focus:border-white transition-all duration-500`;
+    const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/10 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/20'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/20 focus:ring-[12px] focus:ring-accent-blue/5 focus:border-accent-blue transition-all duration-500`;
 
     const labelCls = "block text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-[0.3em] mb-3 px-1";
 

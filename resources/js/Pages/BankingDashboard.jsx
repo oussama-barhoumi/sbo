@@ -24,7 +24,8 @@ import {
     Clock,
     Info,
     CheckCircle,
-    Activity
+    Activity,
+    Wallet
 } from 'lucide-react';
 import Magnetic from '@/Components/Landing/Animations/Magnetic';
 import { useLaravelReactI18n } from 'laravel-react-i18n';
@@ -101,9 +102,9 @@ function Alert({ msg, ok }) {
         <motion.div 
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className={`mb-8 flex items-center gap-4 px-6 py-5 rounded-[2rem] text-sm font-black border transition-colors ${ok ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' : 'bg-red-500/10 text-red-600 border-red-500/20'}`}
+            className={`mb-8 flex items-center gap-4 px-6 py-5 rounded-[2rem] text-sm font-black border transition-colors ${ok ? 'bg-accent-blue/10 text-accent-blue border-accent-blue/20' : 'bg-red-500/10 text-red-600 border-red-500/20'}`}
         >
-            <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? 'bg-emerald-600 text-white' : 'bg-red-600 text-white'}`}>
+            <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${ok ? 'bg-accent-blue text-white' : 'bg-red-600 text-white'}`}>
                 {ok ? '✓' : '!'}
             </div>
             <span className="uppercase tracking-widest text-[10px]">{msg}</span>
@@ -157,7 +158,7 @@ function DepositModal({ open, onClose, userId, onSuccess, profile }) {
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/deposit', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`${t('dashboard.common.complete')}: ${fmt(res.newBalance, profile?.account?.currency, t('locale'))}`); onSuccess(); }
+        if (res.success) { setOk(true); setMsg(`${t('dashboard.common.complete')}: ${fmt(res.newBalance, profile?.currency, t('locale'))}`); onSuccess(); }
         else setMsg(res.message || t('dashboard.common.error'));
     };
 
@@ -175,7 +176,7 @@ function DepositModal({ open, onClose, userId, onSuccess, profile }) {
                         <option value="crypto">{t('dashboard.modals.deposit.method_crypto')}</option>
                     </select>
                 </Field>
-                <button disabled={loading} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
+                <button disabled={loading} className="w-full bg-accent-blue text-white py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-xl hover:shadow-glass hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
                     {loading ? t('dashboard.common.processing') : t('dashboard.modals.deposit.confirm')}
                 </button>
             </form>
@@ -201,7 +202,7 @@ function TransferModal({ open, onClose, userId, onSuccess, profile }) {
         setLoading(true); setMsg(null); setErr({});
         const res = await API('/transfer', { method: 'POST', body: JSON.stringify({ userId, ...form, amount: +form.amount }) });
         setLoading(false);
-        if (res.success) { setOk(true); setMsg(`${t('dashboard.common.complete')}: ${fmt(res.newBalance, profile?.account?.currency, t('locale'))}`); onSuccess(); }
+        if (res.success) { setOk(true); setMsg(`${t('dashboard.common.complete')}: ${fmt(res.newBalance, profile?.currency, t('locale'))}`); onSuccess(); }
         else setMsg(res.message || t('dashboard.common.error'));
     };
 
@@ -215,7 +216,7 @@ function TransferModal({ open, onClose, userId, onSuccess, profile }) {
                 <Field label={t('dashboard.modals.deposit.amount')} error={err.amount}>
                     <input type="number" value={form.amount} onChange={e => setForm({...form, amount: e.target.value})} className={inputCls(err.amount)} placeholder="0.00" />
                 </Field>
-                <button disabled={loading} className="w-full bg-black dark:bg-white text-white dark:text-black py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
+                <button disabled={loading} className="w-full bg-accent-blue text-white py-6 rounded-2xl text-xs font-black uppercase tracking-[0.4em] shadow-xl hover:shadow-glass hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
                     {loading ? t('dashboard.common.processing') : t('dashboard.modals.transfer.confirm')}
                 </button>
             </form>
@@ -281,7 +282,7 @@ export default function BankingDashboard() {
             header={
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3 mb-2">
-                        <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                        <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                         <span className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-white/20">{t('dashboard.header.nodes_verified')}</span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -313,7 +314,7 @@ export default function BankingDashboard() {
                     </div>
                     <div className="flex gap-4">
                         <Magnetic>
-                            <button onClick={logout} className="flex items-center gap-4 bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:scale-105 active:scale-95 transition-all shadow-2xl">
+                            <button onClick={logout} className="flex items-center gap-4 bg-accent-blue text-white px-10 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:shadow-glass hover:scale-105 active:scale-95 transition-all shadow-xl">
                                 <LogOut className="w-4 h-4" /> {t('dashboard.header.sign_out')}
                             </button>
                         </Magnetic>
@@ -323,24 +324,42 @@ export default function BankingDashboard() {
                 {/* Left Column: Stats & Performance */}
                 <div className="lg:col-span-8 space-y-12">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <TiltCard className="bg-white dark:bg-white/5 rounded-[3.5rem] p-12 border border-gray-100 dark:border-white/10 shadow-sm relative overflow-hidden group transition-colors">
-                            <div className="absolute top-0 right-0 w-48 h-48 bg-black/[0.02] dark:bg-white/[0.02] rounded-full translate-x-10 -translate-y-10 group-hover:scale-150 transition-transform duration-1000" />
+                        {/* Primary Card */}
+                        <motion.div variants={itemVars} className="lg:col-span-8 bg-gradient-to-br from-accent-blue to-accent-cyan rounded-[4rem] p-16 text-white shadow-2xl shadow-accent-blue/30 relative overflow-hidden group">
+                            <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/4 pointer-events-none group-hover:scale-110 transition-transform duration-1000" />
+                            
                             <div className="relative z-10">
-                                <div className="w-14 h-14 bg-black dark:bg-white rounded-2xl flex items-center justify-center mb-10 shadow-2xl border border-white/10">
-                                    <Landmark className="w-7 h-7 text-white dark:text-black" />
-                                </div>
-                                <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-3">{t('dashboard.stats.liquid_assets')}</p>
-                                <h3 className="text-6xl font-black tracking-tighter mb-6 italic text-black dark:text-white">{fmt(profile?.balance ?? 0, profile?.currency)}</h3>
-                                
-                                <div className="space-y-4">
-                                    <p className="text-[9px] font-black uppercase tracking-widest text-gray-300 dark:text-white/10">{t('dashboard.stats.account_id')}: <span className="text-black dark:text-white ml-2">{profile?.accountNumber}</span></p>
-                                    <div className="flex items-center gap-3">
-                                        <div className="px-3 py-1 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[9px] font-black uppercase rounded-lg tracking-widest border border-emerald-500/20">+12.4%</div>
-                                        <span className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{t('dashboard.stats.active_growth')}</span>
+                                <div className="flex items-center justify-between mb-12">
+                                    <div className="w-16 h-16 bg-white/20 rounded-[2rem] flex items-center justify-center border border-white/20 backdrop-blur-md">
+                                        <Wallet className="w-8 h-8 text-white" />
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] font-black uppercase tracking-[0.4em] opacity-60 mb-2">Account #ID</p>
+                                        <p className="text-xs font-black tracking-widest">{profile?.accountNumber || '•••• •••• ••••'}</p>
                                     </div>
                                 </div>
+                                
+                                <p className="text-[11px] font-black uppercase tracking-[0.5em] opacity-60 mb-4">{t('dashboard.balance.title')}</p>
+                                <h3 className="text-8xl font-black tracking-tighter mb-12 tabular-nums">
+                                    {fmt(profile?.balance || 0, profile?.currency, t('locale'))}
+                                </h3>
+                                
+                                <div className="flex flex-wrap gap-6">
+                                    <button 
+                                        onClick={() => setModal('deposit')}
+                                        className="flex items-center gap-4 bg-white text-accent-blue px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-opacity-90 hover:scale-105 active:scale-95 transition-all shadow-xl"
+                                    >
+                                        <ArrowUpRight className="w-4 h-4" /> {t('dashboard.balance.deposit')}
+                                    </button>
+                                    <button 
+                                        onClick={() => setModal('transfer')}
+                                        className="flex items-center gap-4 bg-white/20 text-white border border-white/20 backdrop-blur-md px-8 py-5 rounded-2xl text-[10px] font-black uppercase tracking-[0.3em] hover:bg-white/30 hover:scale-105 active:scale-95 transition-all"
+                                    >
+                                        <Zap className="w-4 h-4 fill-white" /> {t('dashboard.balance.transfer')}
+                                    </button>
+                                </div>
                             </div>
-                        </TiltCard>
+                        </motion.div>
 
                         <div className="grid grid-rows-2 gap-8">
                             <div className="bg-white dark:bg-white/5 rounded-[2.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm flex items-center justify-between transition-colors">
@@ -348,12 +367,12 @@ export default function BankingDashboard() {
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20 mb-2">{t('dashboard.stats.monthly_yield')}</p>
                                     <p className="text-3xl font-black italic text-black dark:text-white">{fmt(840.00, 'EUR')}</p>
                                 </div>
-                                <div className="w-12 h-12 bg-gray-50 dark:bg-white/5 rounded-xl flex items-center justify-center">
-                                    <TrendingUp className="w-6 h-6 text-black dark:text-white" />
+                                <div className="w-12 h-12 bg-accent-blue/10 rounded-xl flex items-center justify-center">
+                                    <TrendingUp className="w-6 h-6 text-accent-blue" />
                                 </div>
                             </div>
-                            <div className="bg-black dark:bg-white text-white dark:text-black rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden transition-colors">
-                                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent dark:from-black/5 opacity-50" />
+                            <div className="bg-accent-blue text-white rounded-[2.5rem] p-10 shadow-2xl relative overflow-hidden transition-colors">
+                                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-50" />
                                 <div className="relative z-10">
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] opacity-40 mb-2">{t('dashboard.stats.security_score')}</p>
                                     <p className="text-3xl font-black italic">98.2<span className="text-sm opacity-40 ml-1">/100</span></p>
@@ -369,13 +388,13 @@ export default function BankingDashboard() {
                             <div>
                                 <h3 className="text-3xl font-black tracking-tighter mb-2 text-black dark:text-white uppercase italic">{t('dashboard.performance.title')}</h3>
                                 <div className="flex items-center gap-3">
-                                    <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                                    <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                                     <p className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 dark:text-white/20">{t('dashboard.performance.subtitle')}</p>
                                 </div>
                             </div>
                             <div className="flex gap-2">
                                 {['week', 'month', 'year'].map(period => (
-                                    <button key={period} className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${period === 'week' ? 'bg-black dark:bg-white text-white dark:text-black shadow-xl' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:bg-gray-100 dark:hover:bg-white/10'}`}>
+                                    <button key={period} className={`px-5 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${period === 'week' ? 'bg-accent-blue text-white shadow-xl' : 'bg-gray-50 dark:bg-white/5 text-gray-400 dark:text-white/20 hover:bg-accent-blue/5'}`}>
                                         {t(`dashboard.performance.${period}`)}
                                     </button>
                                 ))}
@@ -395,8 +414,8 @@ export default function BankingDashboard() {
                                 ]}>
                                     <defs>
                                         <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0.05}/>
-                                            <stop offset="95%" stopColor={isDark ? "#fff" : "#000"} stopOpacity={0}/>
+                                            <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2}/>
+                                            <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
                                         </linearGradient>
                                     </defs>
                                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke={isDark ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.03)"} />
@@ -421,7 +440,7 @@ export default function BankingDashboard() {
                                     <Area 
                                         type="monotone" 
                                         dataKey="value" 
-                                        stroke={isDark ? "white" : "black"} 
+                                        stroke="#3b82f6" 
                                         strokeWidth={4} 
                                         fillOpacity={1} 
                                         fill="url(#colorValue)" 
@@ -438,14 +457,14 @@ export default function BankingDashboard() {
                     <motion.div variants={itemVars} className="bg-white dark:bg-white/5 rounded-[3.5rem] p-10 border border-gray-100 dark:border-white/10 shadow-sm transition-colors">
                         <h3 className="text-xl font-black text-black dark:text-white tracking-tighter uppercase italic mb-8">{t('dashboard.actions.title')}</h3>
                         <div className="grid grid-cols-2 gap-4">
-                            <button onClick={() => setModal('deposit')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
-                                <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <button onClick={() => setModal('deposit')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-accent-blue transition-all group">
+                                <div className="w-12 h-12 bg-accent-blue/10 text-accent-blue rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <ArrowDownLeft className="w-6 h-6" />
                                 </div>
                                 <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.actions.deposit')}</span>
                             </button>
-                            <button onClick={() => setModal('transfer')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-black dark:hover:border-white transition-all group">
-                                <div className="w-12 h-12 bg-black dark:bg-white text-white dark:text-black rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                            <button onClick={() => setModal('transfer')} className="flex flex-col items-center gap-4 p-8 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/10 hover:border-accent-blue transition-all group">
+                                <div className="w-12 h-12 bg-accent-blue/10 text-accent-blue rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                                     <ArrowUpRight className="w-6 h-6" />
                                 </div>
                                 <span className="text-[10px] font-black uppercase tracking-widest text-black dark:text-white">{t('dashboard.actions.transfer')}</span>
@@ -461,24 +480,24 @@ export default function BankingDashboard() {
                         </div>
                         
                         <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
-                            {(profile?.ledger || []).length > 0 ? (
-                                profile.ledger.map((entry, i) => (
+                            {(profile?.transactions || []).length > 0 ? (
+                                profile.transactions.map((entry, i) => (
                                     <div key={i} className="flex items-center justify-between p-5 bg-gray-50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/10 hover:border-black/20 transition-all group">
                                         <div className="flex items-center gap-4">
-                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${entry.type === 'credit' ? 'bg-emerald-500/10 text-emerald-600' : 'bg-red-500/10 text-red-600'}`}>
-                                                {entry.type === 'credit' ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
+                                            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${entry.amount > 0 ? 'bg-accent-blue/10 text-accent-blue' : 'bg-red-500/10 text-red-600'}`}>
+                                                {entry.amount > 0 ? <ArrowDownLeft className="w-5 h-5" /> : <ArrowUpRight className="w-5 h-5" />}
                                             </div>
                                             <div>
                                                 <p className="text-[11px] font-black uppercase tracking-tight text-black dark:text-white">{entry.description || t('dashboard.institutional_trx')}</p>
                                                 <div className="flex items-center gap-2 mt-0.5">
                                                     <Clock className="w-3 h-3 text-gray-300 dark:text-white/10" />
-                                                    <p className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{new Date(entry.created_at).toLocaleDateString()}</p>
+                                                    <p className="text-[9px] font-black text-gray-400 dark:text-white/20 uppercase tracking-widest">{entry.date}</p>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="text-right">
-                                            <p className={`text-xs font-black italic ${entry.type === 'credit' ? 'text-emerald-600' : 'text-red-600'}`}>
-                                                {entry.type === 'credit' ? '+' : '-'}{fmt(entry.amount, profile.currency)}
+                                            <p className={`text-xs font-black italic ${entry.amount > 0 ? 'text-accent-blue' : 'text-red-600'}`}>
+                                                {entry.amount > 0 ? '+' : ''}{fmt(entry.amount, profile?.currency)}
                                             </p>
                                         </div>
                                     </div>
@@ -498,16 +517,17 @@ export default function BankingDashboard() {
             <DepositModal 
                 open={modal === 'deposit'} 
                 onClose={() => setModal(null)} 
-                userId={profile?.id} 
+                userId={profile?.userId} 
                 onSuccess={loadProfile} 
+                profile={profile}
             />
             <TransferModal 
                 open={modal === 'transfer'} 
                 onClose={() => setModal(null)} 
-                userId={profile?.id} 
+                userId={profile?.userId} 
                 onSuccess={loadProfile} 
+                profile={profile}
             />
         </AuthenticatedLayout>
     );
 }
-

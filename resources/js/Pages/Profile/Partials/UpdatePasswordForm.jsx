@@ -43,7 +43,7 @@ export default function UpdatePasswordForm({ className = '' }) {
         });
     };
 
-    const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/5 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/10'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/10 focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 focus:border-black dark:focus:border-white transition-all duration-500`;
+    const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/5 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/10'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/10 focus:ring-[12px] focus:ring-accent-blue/5 focus:border-accent-blue transition-all duration-500`;
 
     const labelCls = "block text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-[0.3em] mb-3 px-1";
 
@@ -107,7 +107,7 @@ export default function UpdatePasswordForm({ className = '' }) {
                     <Magnetic>
                         <button 
                             disabled={processing}
-                            className="bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                            className="bg-accent-blue text-white px-10 py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 shadow-xl shadow-accent-blue/20"
                         >
                             {t('profile.security.submit')}
                         </button>

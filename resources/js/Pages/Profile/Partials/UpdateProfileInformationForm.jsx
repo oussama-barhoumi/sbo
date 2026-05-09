@@ -28,7 +28,7 @@ export default function UpdateProfileInformation({
         });
     };
 
-    const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/5 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/10'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/10 focus:ring-[12px] focus:ring-black/5 dark:focus:ring-white/5 focus:border-black dark:focus:border-white transition-all duration-500`;
+    const inputCls = (err) => `w-full px-6 py-5 bg-gray-50 dark:bg-white/5 border ${err ? 'border-red-500' : 'border-gray-100 dark:border-white/10'} rounded-2xl text-black dark:text-white text-base font-bold placeholder-gray-400 focus:outline-none focus:bg-white dark:focus:bg-white/10 focus:ring-[12px] focus:ring-accent-blue/5 focus:border-accent-blue transition-all duration-500`;
 
     const labelCls = "block text-[10px] font-black text-gray-400 dark:text-white/20 uppercase tracking-[0.3em] mb-3 px-1";
 
@@ -38,18 +38,18 @@ export default function UpdateProfileInformation({
                 {/* Avatar Upload */}
                 <div className="flex flex-col sm:flex-row items-center gap-8 pb-8 border-b border-gray-50 dark:border-white/5">
                     <div className="relative group">
-                        <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden border-4 border-gray-50 dark:border-white/5 shadow-xl relative bg-black dark:bg-white/10">
+                        <div className="w-32 h-32 rounded-[2.5rem] overflow-hidden border-4 border-gray-50 dark:border-white/5 shadow-xl relative bg-accent-blue/10">
                             {data.avatar ? (
                                 <img src={URL.createObjectURL(data.avatar)} className="w-full h-full object-cover" />
                             ) : (
-                                <div className="w-full h-full flex items-center justify-center text-white dark:text-white/80 text-3xl font-black italic">
+                                <div className="w-full h-full flex items-center justify-center text-accent-blue text-3xl font-black italic">
                                     {user.avatar ? (
                                         <img src={`/storage/${user.avatar}`} className="w-full h-full object-cover" />
                                     ) : user.name[0]}
                                 </div>
                             )}
                         </div>
-                        <label className="absolute inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-[2.5rem]">
+                        <label className="absolute inset-0 bg-accent-blue/40 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer rounded-[2.5rem]">
                             <Camera className="w-6 h-6 text-white" />
                             <input type="file" className="hidden" onChange={e => setData('avatar', e.target.files[0])} />
                         </label>
@@ -125,7 +125,7 @@ export default function UpdateProfileInformation({
                     <Magnetic>
                         <button 
                             disabled={processing}
-                            className="bg-black dark:bg-white text-white dark:text-black px-10 py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50"
+                            className="bg-accent-blue text-white px-10 py-5 rounded-2xl text-xs font-black uppercase tracking-[0.3em] hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 shadow-xl shadow-accent-blue/20"
                         >
                             {t('profile.info.submit')}
                         </button>

@@ -67,14 +67,14 @@ export default function AuthenticatedLayout({ header, children }) {
                     <div className="flex items-center gap-6">
                         {/* Status Node */}
                         <div className="hidden sm:flex items-center gap-4 px-6 py-3 bg-white dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm transition-colors">
-                            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.5)]" />
+                            <div className="w-2 h-2 bg-accent-blue rounded-full animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                             <span className="text-[9px] font-black uppercase tracking-widest text-black dark:text-white">Node 0x1A Secure</span>
                         </div>
 
                         {/* Theme Toggle */}
                         <button 
                             onClick={toggleDark}
-                            className="w-12 h-12 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center text-gray-400 dark:text-white/20 hover:text-black dark:hover:text-white border border-gray-100 dark:border-white/5 transition-all group"
+                            className="w-12 h-12 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center text-gray-400 dark:text-white/20 hover:text-accent-blue dark:hover:text-white border border-gray-100 dark:border-white/5 transition-all group"
                         >
                             {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
                         </button>
@@ -83,10 +83,10 @@ export default function AuthenticatedLayout({ header, children }) {
                         <div className="relative">
                             <button 
                                 onClick={() => setNotificationsOpen(!notificationsOpen)}
-                                className="w-12 h-12 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center border border-gray-100 dark:border-white/5 hover:border-black dark:hover:border-white transition-all group relative"
+                                className="w-12 h-12 bg-white dark:bg-white/5 rounded-2xl flex items-center justify-center border border-gray-100 dark:border-white/5 hover:border-accent-blue dark:hover:border-white transition-all group relative"
                             >
-                                <Bell className="w-5 h-5 text-gray-400 dark:text-white/20 group-hover:text-black dark:group-hover:text-white" />
-                                <div className="absolute top-3.5 right-3.5 w-2 h-2 bg-black dark:bg-white rounded-full border-2 border-white dark:border-black" />
+                                <Bell className="w-5 h-5 text-gray-400 dark:text-white/20 group-hover:text-accent-blue dark:group-hover:text-white" />
+                                <div className="absolute top-3.5 right-3.5 w-2 h-2 bg-accent-blue rounded-full border-2 border-white dark:border-black shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
                             </button>
 
                             <AnimatePresence>
@@ -113,7 +113,7 @@ export default function AuthenticatedLayout({ header, children }) {
                                                 </div>
                                             ))}
                                         </div>
-                                        <button className="w-full mt-10 py-5 bg-black dark:bg-white text-white dark:text-black rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:scale-[1.02] active:scale-95 transition-all">
+                                        <button className="w-full mt-10 py-5 bg-accent-blue text-white rounded-[1.5rem] text-[9px] font-black uppercase tracking-[0.4em] shadow-xl hover:shadow-glass hover:scale-[1.02] active:scale-95 transition-all">
                                             View All Records
                                         </button>
                                     </motion.div>
@@ -124,7 +124,7 @@ export default function AuthenticatedLayout({ header, children }) {
                         {/* Mobile Menu Toggle */}
                         <button 
                             onClick={() => setShowingNavigationDropdown(!showingNavigationDropdown)}
-                            className="lg:hidden w-12 h-12 bg-black dark:bg-white rounded-2xl flex items-center justify-center text-white dark:text-black"
+                            className="lg:hidden w-12 h-12 bg-accent-blue text-white rounded-2xl flex items-center justify-center shadow-lg"
                         >
                             {showingNavigationDropdown ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                         </button>
